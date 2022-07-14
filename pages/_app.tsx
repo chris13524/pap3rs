@@ -21,9 +21,12 @@ const { chains, provider } = configureChains(
   //   alchemyProvider({ alchemyId: process.env.ALCHEMY_ID }),
   //   publicProvider(),
   // ],
-  [chain.polygonMumbai],
+  [chain.localhost],
+  //[chain.polygonMumbai],
   [publicProvider()],
 );
+
+console.log('chains:',chain)
 
 const { connectors } = getDefaultWallets({
   appName: "Pap3rs",
