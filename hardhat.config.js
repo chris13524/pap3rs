@@ -1,10 +1,10 @@
 require("@nomiclabs/hardhat-waffle");
 require("@nomiclabs/hardhat-etherscan");
 const fs = require('fs');
-const mnemonic = fs.readFileSync("../../.secret").toString().trim();
-const mnemonicMainnet = fs.readFileSync("../../.secret-mainnet").toString().trim();
-const privateKey = fs.readFileSync("../../.private-key").toString().trim();
-const privateKeyMainnet = fs.readFileSync("../../.private-key-mainnet").toString().trim();
+// const mnemonic = fs.readFileSync("../../.secret").toString().trim();
+// const mnemonicMainnet = fs.readFileSync("../../.secret-mainnet").toString().trim();
+// const privateKey = fs.readFileSync("../../.private-key").toString().trim();
+// const privateKeyMainnet = fs.readFileSync("../../.private-key-mainnet").toString().trim();
 
 //const mnemonic = "ozone enter stay alcohol sea ride glance wisdom useful famous grief update neither bacon profit pact front account left truth stereo slogan crush struggle";
 
@@ -40,33 +40,33 @@ module.exports = {
       chainId: 137,
       accounts: [ "b34d5d8a1d64c7fb66bf26b747bf9edaf0106cbd69d72b74ab8e8b8ba1e0eb39" ]
     },
-    polygonMumbai: {
-      url: "https://rpc-mumbai.maticvigil.com/",
-      chainId: 80001,
-      accounts: {mnemonic: mnemonic}
-    },
-    bscTestnet: {
-      url: "https://data-seed-prebsc-1-s1.binance.org:8545",
-      chainId: 97,
-      accounts: {mnemonic: mnemonic}
-    },
-    bsc: {
-      url: "https://bsc-dataseed.binance.org/",
-      chainId: 56,
-      accounts: [ privateKeyMainnet ],
-      gas: 2400000,
-      gasPrice:5000000000
-    },
-    avalanche: {
-      url: "https://api.avax.network/ext/bc/C/rpc",
-      chainId: 43114,
-      accounts: [ fs.readFileSync("../../.private-key-avalanche").toString().trim() ]
-    },
-    avalancheFujiTestnet: {
-      url: "https://api.avax.network/ext/bc/C/rpc",
-      chainId: 43114,
-      accounts: {mnemonic: mnemonic}
-    }
+    // polygonMumbai: {
+    //   url: "https://rpc-mumbai.maticvigil.com/",
+    //   chainId: 80001,
+    //   accounts: {mnemonic: mnemonic}
+    // },
+    // bscTestnet: {
+    //   url: "https://data-seed-prebsc-1-s1.binance.org:8545",
+    //   chainId: 97,
+    //   accounts: {mnemonic: mnemonic}
+    // },
+    // bsc: {
+    //   url: "https://bsc-dataseed.binance.org/",
+    //   chainId: 56,
+    //   accounts: [ privateKeyMainnet ],
+    //   gas: 2400000,
+    //   gasPrice:5000000000
+    // },
+    // avalanche: {
+    //   url: "https://api.avax.network/ext/bc/C/rpc",
+    //   chainId: 43114,
+    //   accounts: [ fs.readFileSync("../../.private-key-avalanche").toString().trim() ]
+    // },
+    // avalancheFujiTestnet: {
+    //   url: "https://api.avax.network/ext/bc/C/rpc",
+    //   chainId: 43114,
+    //   accounts: {mnemonic: mnemonic}
+    // }
   },
   etherscan: {
     apiKey: {
