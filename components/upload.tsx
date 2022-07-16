@@ -5,7 +5,7 @@ import { CloudUpload } from 'tabler-icons-react';
 import { Web3Storage } from 'web3.storage';
 
 import { useAccount, useSigner } from 'wagmi';
-import { useSplitContract } from '../utils/contracts';
+import { usePapersContract } from '../utils/contracts';
 
 function makeStorageClient () {
   let web3StorageApiKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweERiMUE0ZDk2MkI4NmE5RTBFQkZkNDEwODg5NzQ2MzU3ZEFjMEI2MzEiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2NTc3NDYxOTgzMzEsIm5hbWUiOiJwYXAzcnMifQ.4B2ZNk0N-lnux76blYlWGxvVG3ZN4_McwzhSX9t08yU';
@@ -94,7 +94,7 @@ function DropzoneButton() {
   const { data: signer, isError: isError2, isLoading: isLoading2 } = useSigner();
   const { data: account, isError, isLoading, address, isConnected } = useAccount();
 
-  const contract = useSplitContract(signer);
+  const contract = usePapersContract(signer);
   console.log(contract);
   console.log(`isConnected=${isConnected}`);
 

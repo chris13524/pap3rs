@@ -15,6 +15,6 @@ function config(signer: Signer) {
   };
 }
 
-export function useSplitContract(signer: Signer) {
+export function usePapersContract(signer: Signer) {
   return useContract(config(signer));
 }
