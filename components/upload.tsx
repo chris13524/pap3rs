@@ -7,7 +7,7 @@ import { Web3Storage } from 'web3.storage';
 import { useAccount, useSigner } from 'wagmi';
 import { usePapersContract } from '../utils/contracts';
 
-function makeStorageClient () {
+function makeStorageClient() {
   let web3StorageApiKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweERiMUE0ZDk2MkI4NmE5RTBFQkZkNDEwODg5NzQ2MzU3ZEFjMEI2MzEiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2NTc3NDYxOTgzMzEsIm5hbWUiOiJwYXAzcnMifQ.4B2ZNk0N-lnux76blYlWGxvVG3ZN4_McwzhSX9t08yU';
   return new Web3Storage({ token: web3StorageApiKey })
 }
@@ -39,10 +39,10 @@ function getActiveColor(status: DropzoneStatus, theme: MantineTheme) {
   return status.accepted
     ? theme.colors[theme.primaryColor][6]
     : status.rejected
-    ? theme.colors.red[6]
-    : theme.colorScheme === 'dark'
-    ? theme.colors.dark[0]
-    : theme.black;
+      ? theme.colors.red[6]
+      : theme.colorScheme === 'dark'
+        ? theme.colors.dark[0]
+        : theme.black;
 }
 
 async function storeFiles(files) {
@@ -52,20 +52,20 @@ async function storeFiles(files) {
   return cid
 }
 
-async function claim(contract,cid) {
+async function claim(contract, cid) {
   console.log(`Awaiting claim call for cid: ${cid}`);
   await contract.claim(cid);
   console.log(`Finished claim call for cid: ${cid}`);
 }
 
-async function storeWithProgress(contract,files) {
+async function storeWithProgress(contract, files) {
 
-  console.log(`Storing files`,files);
+  console.log(`Storing files`, files);
 
   // show the root cid as soon as it's ready
   const onRootCidReady = cid => {
     console.log(`uploading files with cid: ${cid}`);
-    claim(contract,cid);
+    claim(contract, cid);
   }
 
   // when each chunk is stored, update the percentage complete and display
@@ -102,10 +102,10 @@ function DropzoneButton() {
     <div className={classes.wrapper}>
       <Dropzone
         openRef={openRef}
-        onDrop={(files) => { storeWithProgress(contract,files) }}
+        onDrop={(files) => { storeWithProgress(contract, files) }}
         className={classes.dropzone}
         radius="md"
-        accept={[MIME_TYPES.pdf,MIME_TYPES.png]}
+        accept={[MIME_TYPES.pdf, MIME_TYPES.png]}
         maxSize={30 * 1024 ** 2}
       >
         {(status) => (
@@ -123,8 +123,8 @@ function DropzoneButton() {
               {status.accepted
                 ? 'Drop files here'
                 : status.rejected
-                ? 'Pdf file less than 30mb'
-                : 'Upload paper'}
+                  ? 'Pdf file less than 30mb'
+                  : 'Upload paper'}
             </Text>
             <Text align="center" size="sm" mt="xs" color="dimmed">
               Drag&apos;n&apos;drop files here to upload. We can accept only <i>.pdf</i> files that

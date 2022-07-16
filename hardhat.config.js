@@ -30,15 +30,15 @@ module.exports = {
     hardhat: {
       chainId: 1337
     },
-     ethereum: {
+    ethereum: {
       url: "https://mainnet.infura.io/v3/984680a7a05649beaf37b23462025764",
       chainId: 1,
-      accounts: [ "b34d5d8a1d64c7fb66bf26b747bf9edaf0106cbd69d72b74ab8e8b8ba1e0eb39" ]
+      accounts: ["b34d5d8a1d64c7fb66bf26b747bf9edaf0106cbd69d72b74ab8e8b8ba1e0eb39"]
     },
     polygon: {
       url: "https://polygon-rpc.com/",
       chainId: 137,
-      accounts: [ "b34d5d8a1d64c7fb66bf26b747bf9edaf0106cbd69d72b74ab8e8b8ba1e0eb39" ]
+      accounts: ["b34d5d8a1d64c7fb66bf26b747bf9edaf0106cbd69d72b74ab8e8b8ba1e0eb39"]
     },
     // polygonMumbai: {
     //   url: "https://rpc-mumbai.maticvigil.com/",
