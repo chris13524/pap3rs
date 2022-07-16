@@ -1,4 +1,4 @@
-import { UnstyledButton } from "@mantine/core";
+import { UnstyledButton, Text } from "@mantine/core";
 import { NextLink } from "@mantine/next";
 
 type Link = {
@@ -18,7 +18,7 @@ const NavLink = ({ href, label }: Link) => {
                 theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
         },
     })}>
-        {label}
+        <Text>{label}</Text>
     </UnstyledButton>;
 };
 
