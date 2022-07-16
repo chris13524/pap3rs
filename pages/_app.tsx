@@ -26,7 +26,7 @@ const { chains, provider } = configureChains(
   [publicProvider()],
 );
 
-console.log("chains:",chain);
+console.log("chains:", chain);
 
 const { connectors } = getDefaultWallets({
   appName: "Pap3rs",
@@ -39,13 +39,14 @@ const wagmiClient = createClient({
   provider,
 });
 
-import { ConnectButton } from "@rainbow-me/rainbowkit";
+import Layout from "../components/layout";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return <WagmiConfig client={wagmiClient}>
     <RainbowKitProvider chains={chains}>
-      <ConnectButton />
-      <Component {...pageProps} />
+      <Layout>
+        <Component {...pageProps} />
+      </Layout>
     </RainbowKitProvider>
   </WagmiConfig>;
 }
