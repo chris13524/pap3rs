@@ -1,9 +1,9 @@
-import { AppShell, Center, Navbar, Title } from "@mantine/core";
+import { AppShell, Center, Navbar } from "@mantine/core";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { NextPage } from "next";
-import Link from "next/link";
 import { ReactNode } from "react";
 import Logo from "./logo";
+import NavLinks from "./navlinks";
 
 const Layout: NextPage<{ children: ReactNode }> = ({ children }) => {
     return <AppShell
@@ -14,7 +14,7 @@ const Layout: NextPage<{ children: ReactNode }> = ({ children }) => {
                     <Center><Logo /></Center>
                 </Navbar.Section>
                 <Navbar.Section grow>
-                    <Link href="/paper/abc">View</Link>
+                    <NavLinks />
                 </Navbar.Section>
                 <Navbar.Section>
                     <Center><ConnectButton /></Center>
@@ -25,7 +25,7 @@ const Layout: NextPage<{ children: ReactNode }> = ({ children }) => {
         //     <></>
         // }</Header>}
         styles={(theme) => ({
-            main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
+            main: { backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[8] : theme.colors.gray[0] },
         })}
     >
         {children}
