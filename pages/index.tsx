@@ -15,13 +15,6 @@ const Home: NextPage = () => {
   console.log(contract);
   console.log(`isConnected=${isConnected}`);
 
-  //var name = await contract.name();
-
-  async function loadName() {
-    var name = await contract.name();
-    console.log(`Contract name: ${name}`);
-  }
-
   return (
     <>
       <Head>
@@ -34,14 +27,7 @@ const Home: NextPage = () => {
 
       {isConnected &&
         <div>
-          <button
-            className="btn btn-warning"
-            type="button"
-            onClick={loadName}
-          >
-            loadName
-          </button>
-          <Link href="/upload"><a className={styles.link}>Upload</a></Link>
+          <p>Academic papers published on IPFS. Papers can link to each other using metadata, are versioned on Ceramic, and a smart contract can be used to fund research projects.</p>
         </div>
       }
 
