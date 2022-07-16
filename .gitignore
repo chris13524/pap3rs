@@ -16,6 +16,7 @@
 /build
 /artifacts
 /cache
+/public/src/contracts
 
 # misc
 .DS_Store
