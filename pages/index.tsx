@@ -8,18 +8,18 @@ import styles from '../styles/Home.module.css'
 
 const Home: NextPage = () => {
 
-    const { data: signer, isError: isError2, isLoading: isLoading2 } = useSigner();
-    const { data: account, isError, isLoading, address, isConnected } = useAccount();
+  const { data: signer, isError: isError2, isLoading: isLoading2 } = useSigner();
+  const { data: account, isError, isLoading, address, isConnected } = useAccount();
 
-    const contract = usePapersContract(signer);
-    console.log(contract);
-    console.log(`isConnected=${isConnected}`);
+  const contract = usePapersContract(signer);
+  console.log(contract);
+  console.log(`isConnected=${isConnected}`);
 
-    //var name = await contract.name();
+  //var name = await contract.name();
 
   async function loadName() {
-      var name = await contract.name();
-      console.log(`Contract name: ${name}`);
+    var name = await contract.name();
+    console.log(`Contract name: ${name}`);
   }
 
   return (
@@ -33,8 +33,8 @@ const Home: NextPage = () => {
       <Title order={1}>Pap3rs</Title>
 
       {isConnected &&
-          <div>
-      <button
+        <div>
+          <button
             className="btn btn-warning"
             type="button"
             onClick={loadName}
@@ -42,7 +42,7 @@ const Home: NextPage = () => {
             loadName
           </button>
           <Link href="/upload"><a className={styles.link}>Upload</a></Link>
-          </div>
+        </div>
       }
 
     </>
