@@ -5,8 +5,8 @@ async function main() {
   if (network.name === "hardhat") {
     console.warn(
       "You are trying to deploy a contract to the Hardhat Network, which" +
-        "gets automatically created and destroyed every time. Use the Hardhat" +
-        " option '--network localhost'"
+      "gets automatically created and destroyed every time. Use the Hardhat" +
+      " option '--network localhost'"
     );
   }
 
@@ -17,10 +17,10 @@ async function main() {
     await deployer.getAddress()
   );
 
-  console.log(`Account balance: for deployer wallet:${deployer.address} = ${(await deployer.getBalance()).toString()}`, );
+  console.log(`Account balance: for deployer wallet:${deployer.address} = ${(await deployer.getBalance()).toString()}`,);
 
   const MockToken = await ethers.getContractFactory("MockToken");
-  const mockToken = await MockToken.deploy("USDC","USDC",1000000);
+  const mockToken = await MockToken.deploy("USDC", "USDC", 1000000);
   await mockToken.deployed();
 
   console.log("USDC MockToken contract address:", mockToken.address);
@@ -34,15 +34,15 @@ async function main() {
   console.log("Pap3rs contract address:", contract.address);
 
   // We also save the contract's artifacts and address in the frontend directory
-  saveFrontendFiles(contract,mockToken);
+  saveFrontendFiles(contract, mockToken);
 }
 
-function saveFrontendFiles(contract,mockToken) {
+function saveFrontendFiles(contract, mockToken) {
   const fs = require("fs");
   const contractsDir = __dirname + "/../public/src/contracts";
 
   if (!fs.existsSync(contractsDir)) {
-    fs.mkdirSync(contractsDir);
+    fs.mkdirSync(contractsDir, { recursive: true });
   }
 
   fs.writeFileSync(
