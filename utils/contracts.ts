@@ -15,7 +15,7 @@ function config(signer: Signer) {
   };
 }
 
-export function usePap3rsContract(signer: Signer) {
+export function usePapersContract(signer: Signer) {
   return useContract({
     addressOrName: {
       8545: contractAddress.Pap3rs,
