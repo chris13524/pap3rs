@@ -15,6 +15,22 @@ function config(signer: Signer) {
   };
 }
 
-export function usePapersContract(signer: Signer) {
-  return useContract(config(signer));
+export function usePap3rsContract(signer: Signer) {
+  return useContract({
+    addressOrName: {
+      8545: contractAddress.Pap3rs,
+    }[process.env.CHAIN_ID || 8545]!,
+    contractInterface: require("../public/src/contracts/Pap3rs.json").abi,
+    signerOrProvider: signer,
+  });
+}
+
+export function useMockTokenContract(signer: Signer) {
+  return useContract({
+    addressOrName: {
+      8545: contractAddress.MockToken,
+    }[process.env.CHAIN_ID || 8545]!,
+    contractInterface: require("../public/src/contracts/MockToken.json").abi,
+    signerOrProvider: signer,
+  });
 }

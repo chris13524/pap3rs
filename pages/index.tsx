@@ -3,7 +3,7 @@ import type { NextPage } from "next";
 import Link from "next/link";
 import Head from "next/head";
 import { useAccount, useSigner } from "wagmi";
-import { usePapersContract } from "../utils/contracts";
+import { usePap3rsContract } from "../utils/contracts";
 import styles from "../styles/Home.module.css";
 
 const Home: NextPage = () => {
@@ -11,7 +11,7 @@ const Home: NextPage = () => {
   const { data: signer, isError: isError2, isLoading: isLoading2 } = useSigner();
   const { data: account, isError, isLoading, address, isConnected } = useAccount();
 
-  const contract = usePapersContract(signer);
+  const contract = usePap3rsContract(signer);
   console.log(contract);
   console.log(`isConnected=${isConnected}`);
 
@@ -41,7 +41,11 @@ const Home: NextPage = () => {
           >
             loadName
           </button>
-          <Link href="/upload"><a className={styles.link}>Upload</a></Link>
+          <ul>
+            <li><Link href="/upload"><a className={styles.link}>Upload</a></Link></li>
+            <li><Link href="/donate"><a className={styles.link}>Donate</a></Link></li>
+          </ul>
+
         </div>
       }
 
