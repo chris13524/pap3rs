@@ -1,10 +1,10 @@
 import { Title } from "@mantine/core";
 import type { NextPage } from "next";
-import Link from 'next/link';
+import Link from "next/link";
 import Head from "next/head";
-import { useAccount, useSigner } from 'wagmi';
-import { usePapersContract } from '../utils/contracts';
-import styles from '../styles/Home.module.css'
+import { useAccount, useSigner } from "wagmi";
+import { usePapersContract } from "../utils/contracts";
+import styles from "../styles/Home.module.css";
 
 const Home: NextPage = () => {
 
