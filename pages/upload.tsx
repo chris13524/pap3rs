@@ -16,7 +16,7 @@ const Upload: NextPage = () => {
         <h1 className={styles.title}>Upload Paper</h1>
 
         <p className={styles.description}>
-          <DropzoneButton/>
+          <DropzoneButton />
         </p>
       </main>
     </div>
