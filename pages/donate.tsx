@@ -3,7 +3,7 @@ import Head from "next/head";
 import styles from "../styles/Home.module.css";
 
 import { useAccount, useSigner } from "wagmi";
-import { usePap3rsContract, useMockTokenContract } from '../utils/contracts';
+import { usePapersContract, useMockTokenContract } from '../utils/contracts';
 
 async function approve(contract,cid) {
   console.log(`Awaiting claim call for cid: ${cid}`);
@@ -16,7 +16,7 @@ const Upload: NextPage = () => {
     const { data: signer, isError: isError2, isLoading: isLoading2 } = useSigner();
     const { data: account, isError, isLoading, address, isConnected } = useAccount();
 
-    const contract = usePap3rsContract(signer);
+    const contract = usePapersContract(signer);
     console.log('signer',signer);
     console.log('contract',contract);
     const mockTokenContract = useMockTokenContract(signer);

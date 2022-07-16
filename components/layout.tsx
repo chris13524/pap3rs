@@ -13,8 +13,17 @@ const Layout: NextPage<{ children: ReactNode }> = ({ children }) => {
                 <Navbar.Section>
                     <Center><Logo /></Center>
                 </Navbar.Section>
-                <Navbar.Section grow>
+                <Navbar.Section>
+                    <Link href="/">Home</Link>
+                </Navbar.Section>
+                <Navbar.Section>
                     <Link href="/paper/abc">View</Link>
+                </Navbar.Section>
+                <Navbar.Section>
+                    <Link href="/upload">Upload</Link><br/>
+                </Navbar.Section>
+                <Navbar.Section grow>
+                    <Link href="/donate">Donate</Link><br/>
                 </Navbar.Section>
                 <Navbar.Section>
                     <Center><ConnectButton /></Center>
