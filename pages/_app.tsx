@@ -26,7 +26,7 @@ const { chains, provider } = configureChains(
   [publicProvider()],
 );
 
-console.log('chains:',chain)
+console.log("chains:",chain);
 
 const { connectors } = getDefaultWallets({
   appName: "Pap3rs",

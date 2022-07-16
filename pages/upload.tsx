@@ -1,7 +1,7 @@
-import type { NextPage } from 'next'
-import Head from 'next/head'
-import styles from '../styles/Home.module.css'
-import DropzoneButton from '../components/upload.tsx'
+import type { NextPage } from "next";
+import Head from "next/head";
+import styles from "../styles/Home.module.css";
+import DropzoneButton from "../components/upload";
 
 const Upload: NextPage = () => {
   return (
@@ -20,7 +20,7 @@ const Upload: NextPage = () => {
         </p>
       </main>
     </div>
-  )
-}
+  );
+};
 
-export default Upload
+export default Upload;
