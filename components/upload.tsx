@@ -7,6 +7,8 @@ import { usePapersContract } from "../utils/contracts";
 import { useForm } from "@mantine/form";
 import { storeJson, web3Storage } from "../utils/ipfs";
 import { Paper } from "../utils/paper";
+import { showNotification } from "@mantine/notifications";
+import { useRouter } from "next/router";
 
 const useStyles = createStyles((theme) => ({
   dropzone: {
@@ -63,10 +65,16 @@ async function storeWithProgress(contract, values: { title: string, description:
 
   await contract.claim(metadata);
 
+  showNotification({
+    title: "Paper published",
+    message: "Your paper has been published to IPFS!",
+  });
+
   return metadata;
 }
 
 function DropzoneButton() {
+  const router = useRouter();
   const theme = useMantineTheme();
   const { classes } = useStyles();
 
@@ -86,9 +94,14 @@ function DropzoneButton() {
 
   const [files, setFiles] = useState<File[]>([]);
 
+  const onSubmit = (values: any) => {
+    storeWithProgress(contract, values, files)
+      .then(cid => router.push(`/paper/${cid}`));
+  };
+
   return (
     <Container size="sm">
-      <form onSubmit={form.onSubmit(values => storeWithProgress(contract, values, files))}>
+      <form onSubmit={form.onSubmit(onSubmit)}>
         <Stack p="md">
           <Title>Upload Paper</Title>
 
