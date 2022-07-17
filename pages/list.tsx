@@ -8,31 +8,27 @@ import { useAccount, useSigner } from "wagmi";
 import { usePapersContract } from "../utils/contracts";
 
 const List: NextPage = () => {
-
   const { data: signer, isError: isError2, isLoading: isLoading2 } = useSigner();
   const { data: account, isError, isLoading, address, isConnected } = useAccount();
 
   const contract = usePapersContract(signer);
 
-  let cids = [];
+  const [cids, setCids] = useState([]);
 
   async function listCids() {
-      try {
-          console.log('loading pages')
-          cids = await contract.listCids();
-          console.log(`pages loaded`,cids);
-      }
-      catch(error) {
-        console.error("Error getting cid list: ",error);
-      }
+    try {
+      console.log('loading pages')
+      setCids(await contract.listCids());
+      console.log(`pages loaded`, cids);
+    } catch (error) {
+      console.error("Error getting cid list: ", error);
+    }
   }
 
   useEffect(() => {
     // Update the document title using the browser API
     listCids();
-  });
-
-  setTimeout(listCids, 0);
+  }, []);
 
   return (
     <div className={styles.container}>
@@ -43,14 +39,14 @@ const List: NextPage = () => {
       </Head>
 
       <main className={styles.main}>
-      <h1 className={styles.title}>List of papers</h1>
-      {cids.length > 0 &&
+        <h1 className={styles.title}>List of papers</h1>
+        {cids.length > 0 &&
           <ul>
-      {cids.map(function(cid) {
-        return <li key={cid}><Link href={"/paper/"+cid}>{ cid }</Link></li>;
-      })}
-    </ul>
-      }
+            {cids.map(function (cid) {
+              return <li key={cid}><Link href={"/paper/" + cid}>{cid}</Link></li>;
+            })}
+          </ul>
+        }
       </main>
     </div>
   );
