@@ -33,7 +33,7 @@ const Paper: NextPage = () => {
       display: "flex",
       flexDirection: "row",
     }}>
-      <iframe src={src} style={{
+      <iframe key={src} src={src} style={{
         display: "block",
         width: "100%",
         height: "100vh",
