@@ -1,12 +1,12 @@
-import React, { useState } from "react";
-import { Text, Group, Button, createStyles, MantineTheme, useMantineTheme, Stack, Container, Title, TextInput, Textarea } from "@mantine/core";
+import React, { useEffect, useState } from "react";
+import { Text, Group, Button, createStyles, MantineTheme, useMantineTheme, Stack, Container, Title, TextInput, Textarea, MultiSelect } from "@mantine/core";
 import { Dropzone, DropzoneStatus, MIME_TYPES } from "@mantine/dropzone";
 import { CloudUpload } from "tabler-icons-react";
 import { useAccount, useSigner } from "wagmi";
 import { usePapersContract } from "../utils/contracts";
 import { useForm } from "@mantine/form";
-import { storeJson, web3Storage } from "../utils/ipfs";
-import { Paper } from "../utils/paper";
+import { retrieveJson, storeJson, web3Storage } from "../utils/ipfs";
+import { allPapers, Paper } from "../utils/paper";
 import { showNotification } from "@mantine/notifications";
 import { useRouter } from "next/router";
 
@@ -38,7 +38,7 @@ function getActiveColor(status: DropzoneStatus, theme: MantineTheme) {
         : theme.black;
 }
 
-async function storeWithProgress(contract, values: { title: string, description: string }, files: File[]) {
+async function storeWithProgress(contract, values: { title: string, description: string, references: string[] }, files: File[]) {
   console.log("Storing files", files);
 
   // when each chunk is stored, update the percentage complete and display
@@ -59,7 +59,6 @@ async function storeWithProgress(contract, values: { title: string, description:
     ...values,
     content,
     contentFileName: files[0].name,
-    references: [],
   });
   console.log("metadata CID:", metadata);
 
@@ -89,6 +88,7 @@ function DropzoneButton() {
     initialValues: {
       title: "",
       description: "",
+      references: [],
     },
   });
 
@@ -98,6 +98,21 @@ function DropzoneButton() {
     storeWithProgress(contract, values, files)
       .then(cid => router.push(`/paper/${cid}`));
   };
+
+  type ResolvedPaper = Paper & { cid: string };
+
+  const [papers, setPapers] = useState<ResolvedPaper[]>([]);
+  useEffect(() => {
+    (async () => {
+      const papers = [];
+      for (const cid of allPapers) {
+        const paper = await retrieveJson<ResolvedPaper>(cid);
+        paper.cid = cid;
+        papers.push(paper);
+      }
+      setPapers(papers);
+    })();
+  }, []);
 
   return (
     <Container size="sm">
@@ -118,53 +133,61 @@ function DropzoneButton() {
           />
 
           {files.length == 0 &&
-          <Dropzone
-            onDrop={files => setFiles(files)}
-            className={classes.dropzone}
-            radius="md"
-            accept={[MIME_TYPES.pdf]}
-            maxSize={30 * 1024 ** 2}
-          >
-            {(status) => (
-              <>
-                <div style={{ pointerEvents: "none" }}>
-                  <Group position="center">
-                    <CloudUpload size={50} color={getActiveColor(status, theme)} />
-                  </Group>
-                  <Text
-                    align="center"
-                    weight={700}
-                    size="lg"
-                    mt="xl"
-                    sx={{ color: getActiveColor(status, theme) }}
-                  >
-                    {status.accepted
-                      ? "Drop files here"
-                      : status.rejected
-                        ? "Pdf file less than 30mb"
-                        : "Upload paper"}
-                  </Text>
-                  <Text align="center" size="sm" mt="xs" color="dimmed">
-                    Drag&apos;n&apos;drop files here to upload. We can accept only <i>.pdf</i> files that
-                    are less than 30mb in size.
-                  </Text>
-                </div>
-                <Button className={classes.control} size="md" radius="xl">
-                  Select files
-                </Button>
-              </>
-            )}
-          </Dropzone>
+            <Dropzone
+              onDrop={files => setFiles(files)}
+              className={classes.dropzone}
+              radius="md"
+              accept={[MIME_TYPES.pdf]}
+              maxSize={30 * 1024 ** 2}
+            >
+              {(status) => (
+                <>
+                  <div style={{ pointerEvents: "none" }}>
+                    <Group position="center">
+                      <CloudUpload size={50} color={getActiveColor(status, theme)} />
+                    </Group>
+                    <Text
+                      align="center"
+                      weight={700}
+                      size="lg"
+                      mt="xl"
+                      sx={{ color: getActiveColor(status, theme) }}
+                    >
+                      {status.accepted
+                        ? "Drop files here"
+                        : status.rejected
+                          ? "Pdf file less than 30mb"
+                          : "Upload paper"}
+                    </Text>
+                    <Text align="center" size="sm" mt="xs" color="dimmed">
+                      Drag&apos;n&apos;drop files here to upload. We can accept only <i>.pdf</i> files that
+                      are less than 30mb in size.
+                    </Text>
+                  </div>
+                  <Button className={classes.control} size="md" radius="xl">
+                    Select files
+                  </Button>
+                </>
+              )}
+            </Dropzone>
           }
           {files.length > 0 &&
             <ul>
               {files.map(function (file) {
                 return <li key={file.lastModified}>{file.path} <Button color="red" compact onClick={files => setFiles([])}>
-      x
-    </Button></li>;
+                  x
+                </Button></li>;
               })}
             </ul>
           }
+
+          <MultiSelect
+            data={papers.map(paper => ({ label: paper.title, value: paper.cid }))}
+            label="References"
+            searchable
+            nothingFound="Nothing found"
+            {...form.getInputProps("references")}
+          />
 
           <Group mt="md">
             <Button type="submit">Upload</Button>
