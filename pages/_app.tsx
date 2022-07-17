@@ -40,15 +40,23 @@ const wagmiClient = createClient({
 });
 
 import Layout from "../components/layout";
+import { MantineProvider } from "@mantine/core";
+import { NotificationsProvider } from "@mantine/notifications";
 
 function MyApp({ Component, pageProps }: AppProps) {
-  return <WagmiConfig client={wagmiClient}>
-    <RainbowKitProvider chains={chains}>
-      <Layout>
-        <Component {...pageProps} />
-      </Layout>
-    </RainbowKitProvider>
-  </WagmiConfig>;
+  return (
+    <WagmiConfig client={wagmiClient}>
+      <RainbowKitProvider chains={chains}>
+        <MantineProvider>
+          <NotificationsProvider>
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
+          </NotificationsProvider>
+        </MantineProvider>
+      </RainbowKitProvider>
+    </WagmiConfig>
+  );
 }
 
 export default MyApp;

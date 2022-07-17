@@ -7,7 +7,11 @@ import { useEffect, useState } from "react";
 import { retrieveJson } from "../utils/ipfs";
 import { Paper } from "../utils/paper";
 
-const featuredPapers = ["bafybeib7d2fya6d2fjhsq7mbzaeksnw7jkhlzbmk3s6zskmced6xuies7a"];
+const featuredPapers = [
+  "bafybeifizkg427yhygjjbhy2uylpa7dq32wnw54zbbuusemgw6qcxoprri",
+  "bafybeidugsonwrnlr5wfrmi5r7beqkhx6pphegu5kgn4eeqwrdf7e3mw6y",
+  "bafybeib7d2fya6d2fjhsq7mbzaeksnw7jkhlzbmk3s6zskmced6xuies7a",
+];
 
 const Home: NextPage = () => {
   const { data: signer, isError: isError2, isLoading: isLoading2 } = useSigner();
