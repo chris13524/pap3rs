@@ -3,32 +3,21 @@ import type { NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import styles from "../styles/Home.module.css";
-
-import { useAccount, useSigner } from "wagmi";
+import { useSigner } from "wagmi";
 import { usePapersContract } from "../utils/contracts";
 
 const List: NextPage = () => {
-  const { data: signer, isError: isError2, isLoading: isLoading2 } = useSigner();
-  const { data: account, isError, isLoading, address, isConnected } = useAccount();
-
+  const { data: signer } = useSigner();
   const contract = usePapersContract(signer);
 
   const [cids, setCids] = useState([]);
-
-  async function listCids() {
-    try {
-      console.log('loading pages')
-      setCids(await contract.listCids());
-      console.log(`pages loaded`, cids);
-    } catch (error) {
-      console.error("Error getting cid list: ", error);
-    }
-  }
-
   useEffect(() => {
-    // Update the document title using the browser API
-    listCids();
-  }, []);
+    if (signer) {
+      (async () => {
+        setCids(await contract.listCids());
+      })();
+    }
+  }, [signer]);
 
   return (
     <div className={styles.container}>
