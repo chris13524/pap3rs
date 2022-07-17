@@ -1,19 +1,27 @@
-import { Stack, Text, Aside, Group, Box, ScrollArea } from "@mantine/core";
+import { Text, Box, ScrollArea, List, Title, Stack, Anchor } from "@mantine/core";
+import { NextLink } from "@mantine/next";
 import { NextPage } from "next";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { retrieveJson } from "../../utils/ipfs";
 import { Paper } from "../../utils/paper";
 
+type ResolvedPaper = Paper & { resolvedReferences: (Paper & { cid: string })[] };
+
 const Paper: NextPage = () => {
   const router = useRouter();
   const { cid } = router.query;
 
-  const [paper, setPaper] = useState<Paper>();
+  const [paper, setPaper] = useState<ResolvedPaper>();
   useEffect(() => {
     (async () => {
       if (cid) {
-        setPaper(await retrieveJson<Paper>(cid as string));
+        const paper = Object.assign(await retrieveJson<ResolvedPaper>(cid as string), { resolvedReferences: [] });
+        for (const reference of paper.references) {
+          paper.resolvedReferences.push(Object.assign(await retrieveJson<Paper>(reference), { cid: reference }));
+        }
+        setPaper(paper);
       }
     })();
   }, [cid]);
@@ -36,7 +44,21 @@ const Paper: NextPage = () => {
         maxWidth: "300px",
         height: "100vh",
       }}>
-        <Text>{paper?.description}</Text>
+        <Stack>
+          <Text>{paper?.title}</Text>
+          <Text>{paper?.description}</Text>
+
+          <Title order={4}>References</Title>
+          <List>
+            {paper?.resolvedReferences?.map(reference => (
+              <List.Item key={reference.cid}>
+                <Anchor component={NextLink} href={`/paper/${reference.cid}`}>
+                  {reference.title}
+                </Anchor>
+              </List.Item>
+            ))}
+          </List>
+        </Stack>
       </ScrollArea>
     </Box>
   );
