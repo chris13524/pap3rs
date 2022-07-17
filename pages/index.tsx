@@ -8,6 +8,7 @@ type Paper = {
   cid: string,
   title: string,
   description: string,
+  references: string[],
 };
 
 const featuredPapers: Paper[] = [
