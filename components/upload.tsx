@@ -1,17 +1,12 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { Text, Group, Button, createStyles, MantineTheme, useMantineTheme, Stack, Container, Title, TextInput, Textarea } from "@mantine/core";
 import { Dropzone, DropzoneStatus, MIME_TYPES } from "@mantine/dropzone";
 import { CloudUpload } from "tabler-icons-react";
-import { Web3Storage } from "web3.storage";
-
 import { useAccount, useSigner } from "wagmi";
 import { usePapersContract } from "../utils/contracts";
 import { useForm } from "@mantine/form";
-
-function makeStorageClient() {
-  const web3StorageApiKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweERiMUE0ZDk2MkI4NmE5RTBFQkZkNDEwODg5NzQ2MzU3ZEFjMEI2MzEiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2NTc3NDYxOTgzMzEsIm5hbWUiOiJwYXAzcnMifQ.4B2ZNk0N-lnux76blYlWGxvVG3ZN4_McwzhSX9t08yU";
-  return new Web3Storage({ token: web3StorageApiKey });
-}
+import { storeJson, web3Storage } from "../utils/ipfs";
+import { Paper } from "../utils/paper";
 
 const useStyles = createStyles((theme) => ({
   dropzone: {
@@ -41,28 +36,8 @@ function getActiveColor(status: DropzoneStatus, theme: MantineTheme) {
         : theme.black;
 }
 
-async function storeFiles(files) {
-  const client = makeStorageClient();
-  const cid = await client.put(files);
-  console.log("stored files with cid:", cid);
-  return cid;
-}
-
-async function claim(contract, cid) {
-  console.log(`Awaiting claim call for cid: ${cid}`);
-  await contract.claim(cid);
-  console.log(`Finished claim call for cid: ${cid}`);
-}
-
-async function storeWithProgress(contract, files) {
-
+async function storeWithProgress(contract, values: { title: string, description: string }, files: File[]) {
   console.log("Storing files", files);
-
-  // show the root cid as soon as it's ready
-  const onRootCidReady = cid => {
-    console.log(`uploading files with cid: ${cid}`);
-    claim(contract, cid);
-  };
 
   // when each chunk is stored, update the percentage complete and display
   const totalSize = files.map(f => f.size).reduce((a, b) => a + b, 0);
@@ -74,12 +49,21 @@ async function storeWithProgress(contract, files) {
     console.log(`Uploading... ${pct.toFixed(2)}% complete`);
   };
 
-  // makeStorageClient returns an authorized Web3.Storage client instance
-  const client = makeStorageClient();
-
   // client.put will invoke our callbacks during the upload
   // and return the root cid when the upload completes
-  return client.put(files, { onRootCidReady, onStoredChunk });
+  const content = await web3Storage.put(files, { onStoredChunk });
+
+  const metadata = await storeJson<Paper>({
+    ...values,
+    content,
+    contentFileName: files[0].name,
+    references: [],
+  });
+  console.log("metadata CID:", metadata);
+
+  await contract.claim(metadata);
+
+  return metadata;
 }
 
 function DropzoneButton() {
@@ -100,11 +84,11 @@ function DropzoneButton() {
     },
   });
 
-  const [files, setFiles] = useState<File[]>();
+  const [files, setFiles] = useState<File[]>([]);
 
   return (
     <Container size="sm">
-      <form onSubmit={form.onSubmit(values => storeWithProgress(contract, files))}>
+      <form onSubmit={form.onSubmit(values => storeWithProgress(contract, values, files))}>
         <Stack p="md">
           <Title>Upload Paper</Title>
 
