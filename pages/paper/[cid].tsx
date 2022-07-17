@@ -1,20 +1,47 @@
+import { Stack, Text, Aside, Group, Box, ScrollArea } from "@mantine/core";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import { retrieveJson } from "../../utils/ipfs";
+import { Paper } from "../../utils/paper";
 
 const Paper: NextPage = () => {
   const router = useRouter();
   const { cid } = router.query;
+  console.log("cid:", cid);
 
-  const filename = "Towards%20a%20Decentralized%20Process%20for%20Scientific%20Publication%20and%20Peer%20Review.pdf";
-  const src = `https://${cid}.ipfs.dweb.link/${filename}`;
+  const [paper, setPaper] = useState<Paper>();
+  useEffect(() => {
+    (async () => {
+      if (cid) {
+        console.log("cid:", cid);
+        setPaper(await retrieveJson<Paper>(cid as string));
+      }
+    })();
+  }, [cid]);
+
+  const src = paper ? `https://${paper.content}.ipfs.dweb.link/${paper.contentFileName}` : undefined;
+  console.log("src:", src);
 
   return (
-    <iframe src={src} style={{
-      display: "block",
-      width: "100%",
-      height: "100%",
-      border: 0,
-    }} />
+    <Box style={{
+      display: "flex",
+      flexDirection: "row",
+    }}>
+      <iframe src={src} style={{
+        display: "block",
+        width: "100%",
+        height: "100vh",
+        border: 0,
+      }} />
+      <ScrollArea p="md" style={{
+        flexShrink: 1,
+        maxWidth: "300px",
+        height: "100vh",
+      }}>
+        <Text>{paper?.description}</Text>
+      </ScrollArea>
+    </Box>
   );
 };
 
