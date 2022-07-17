@@ -8,20 +8,17 @@ import { Paper } from "../../utils/paper";
 const Paper: NextPage = () => {
   const router = useRouter();
   const { cid } = router.query;
-  console.log("cid:", cid);
 
   const [paper, setPaper] = useState<Paper>();
   useEffect(() => {
     (async () => {
       if (cid) {
-        console.log("cid:", cid);
         setPaper(await retrieveJson<Paper>(cid as string));
       }
     })();
   }, [cid]);
 
   const src = paper ? `https://${paper.content}.ipfs.dweb.link/${paper.contentFileName}` : undefined;
-  console.log("src:", src);
 
   return (
     <Box style={{
