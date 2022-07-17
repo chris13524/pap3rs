@@ -1,11 +1,12 @@
-import React, { useRef } from "react";
-import { Text, Group, Button, createStyles, MantineTheme, useMantineTheme } from "@mantine/core";
+import React, { useRef, useState } from "react";
+import { Text, Group, Button, createStyles, MantineTheme, useMantineTheme, Stack, Container, Title, TextInput, Textarea } from "@mantine/core";
 import { Dropzone, DropzoneStatus, MIME_TYPES } from "@mantine/dropzone";
 import { CloudUpload } from "tabler-icons-react";
 import { Web3Storage } from "web3.storage";
 
 import { useAccount, useSigner } from "wagmi";
 import { usePapersContract } from "../utils/contracts";
+import { useForm } from "@mantine/form";
 
 function makeStorageClient() {
   const web3StorageApiKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweERiMUE0ZDk2MkI4NmE5RTBFQkZkNDEwODg5NzQ2MzU3ZEFjMEI2MzEiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2NTc3NDYxOTgzMzEsIm5hbWUiOiJwYXAzcnMifQ.4B2ZNk0N-lnux76blYlWGxvVG3ZN4_McwzhSX9t08yU";
@@ -13,11 +14,6 @@ function makeStorageClient() {
 }
 
 const useStyles = createStyles((theme) => ({
-  wrapper: {
-    position: "relative",
-    marginBottom: 30,
-  },
-
   dropzone: {
     borderWidth: 1,
     paddingBottom: 50,
@@ -89,7 +85,6 @@ async function storeWithProgress(contract, files) {
 function DropzoneButton() {
   const theme = useMantineTheme();
   const { classes } = useStyles();
-  const openRef = useRef<() => void>();
 
   const { data: signer, isError: isError2, isLoading: isLoading2 } = useSigner();
   const { data: account, isError, isLoading, address, isConnected } = useAccount();
@@ -98,46 +93,77 @@ function DropzoneButton() {
   console.log(contract);
   console.log(`isConnected=${isConnected}`);
 
-  return (
-    <div className={classes.wrapper}>
-      <Dropzone
-        openRef={openRef}
-        onDrop={(files) => { storeWithProgress(contract, files); }}
-        className={classes.dropzone}
-        radius="md"
-        accept={[MIME_TYPES.pdf, MIME_TYPES.png]}
-        maxSize={30 * 1024 ** 2}
-      >
-        {(status) => (
-          <div style={{ pointerEvents: "none" }}>
-            <Group position="center">
-              <CloudUpload size={50} color={getActiveColor(status, theme)} />
-            </Group>
-            <Text
-              align="center"
-              weight={700}
-              size="lg"
-              mt="xl"
-              sx={{ color: getActiveColor(status, theme) }}
-            >
-              {status.accepted
-                ? "Drop files here"
-                : status.rejected
-                  ? "Pdf file less than 30mb"
-                  : "Upload paper"}
-            </Text>
-            <Text align="center" size="sm" mt="xs" color="dimmed">
-              Drag&apos;n&apos;drop files here to upload. We can accept only <i>.pdf</i> files that
-              are less than 30mb in size.
-            </Text>
-          </div>
-        )}
-      </Dropzone>
+  const form = useForm({
+    initialValues: {
+      title: "",
+      description: "",
+    },
+  });
 
-      <Button className={classes.control} size="md" radius="xl" onClick={() => openRef.current()}>
-        Select files
-      </Button>
-    </div>
+  const [files, setFiles] = useState<File[]>();
+
+  return (
+    <Container size="sm">
+      <form onSubmit={form.onSubmit(values => storeWithProgress(contract, files))}>
+        <Stack p="md">
+          <Title>Upload Paper</Title>
+
+          <TextInput
+            required
+            label="Title"
+            {...form.getInputProps("title")}
+          />
+
+          <Textarea
+            label="Description"
+            {...form.getInputProps("description")}
+            required
+          />
+
+          <Dropzone
+            onDrop={files => setFiles(files)}
+            className={classes.dropzone}
+            radius="md"
+            accept={[MIME_TYPES.pdf, MIME_TYPES.png]}
+            maxSize={30 * 1024 ** 2}
+          >
+            {(status) => (
+              <>
+                <div style={{ pointerEvents: "none" }}>
+                  <Group position="center">
+                    <CloudUpload size={50} color={getActiveColor(status, theme)} />
+                  </Group>
+                  <Text
+                    align="center"
+                    weight={700}
+                    size="lg"
+                    mt="xl"
+                    sx={{ color: getActiveColor(status, theme) }}
+                  >
+                    {status.accepted
+                      ? "Drop files here"
+                      : status.rejected
+                        ? "Pdf file less than 30mb"
+                        : "Upload paper"}
+                  </Text>
+                  <Text align="center" size="sm" mt="xs" color="dimmed">
+                    Drag&apos;n&apos;drop files here to upload. We can accept only <i>.pdf</i> files that
+                    are less than 30mb in size.
+                  </Text>
+                </div>
+                <Button className={classes.control} size="md" radius="xl">
+                  Select files
+                </Button>
+              </>
+            )}
+          </Dropzone>
+
+          <Group mt="md">
+            <Button type="submit">Upload</Button>
+          </Group>
+        </Stack>
+      </form>
+    </Container>
   );
 }
 
