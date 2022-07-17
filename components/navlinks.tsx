@@ -24,6 +24,7 @@ const NavLink = ({ href, label }: Link) => {
 
 const links: Link[] = [
   { href: "/", label: "Home" },
+  { href: "/list", label: "List of papers" },
   { href: "/paper/abc", label: "View paper" },
   { href: "/upload", label: "Upload paper" },
   { href: "/donate", label: "Donate" },

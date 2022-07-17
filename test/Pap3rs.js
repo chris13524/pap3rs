@@ -4,7 +4,6 @@ describe("Pap3rs contract", function () {
   let Token;
   let contract;
   let mockToken;
-  let donationTokenAddress;
   let deployer;
   let author;
   let donor;
@@ -21,7 +20,6 @@ describe("Pap3rs contract", function () {
     mockToken = await MockToken.deploy("USDC","USDC",1000000);
     await contract.deployed();
     await mockToken.deployed();
-    donationTokenAddress = mockToken.address;
   });
 
   describe("Transactions", function () {
@@ -34,24 +32,26 @@ describe("Pap3rs contract", function () {
         await contract.connect(author).claim(cid);
         let ownerAddress = await contract.getOwner(cid);
         expect(ownerAddress).to.equal(author.address);
+        let cids = await contract.listCids();
+        expect(cids.length).to.equal(1);
       });
 
       it("approveDonationToken sets proper allowance on donation token", async function () {
         await mockToken.connect(donor).approve(contract.address, donationAmt);
         let allowance = await mockToken.allowance(donor.address,contract.address);
-        console.log(`allowance=${allowance}`);
         await expect(allowance).to.equal(donationAmt);
       });
 
       it("Donation to cid not submitted should be rejected", async function () {
-        await expect(contract.connect(donor).donate(cid,donationTokenAddress,donationAmt)).to.be.revertedWith("CID must have been contributed to donate to");
+        await expect(contract.connect(donor).donate(cid,mockToken.address,donationAmt)).to.be.revertedWith("CID must have been contributed to donate to");
       });
 
       it("Donation to cid submitted should work", async function () {
+        await mockToken.connect(deployer).transfer(donor.address,donationAmt);
         await contract.connect(author).claim(cid);
-        await contract.connect(author).approveDonationToken(donationTokenAddress, donationAmt);
-        await contract.donate(cid, donationTokenAddress, donationAmt);
-        let donationTokenBalance = contract.getDonationBalance(cid, donationTokenAddress);
+        await mockToken.connect(donor).approve(contract.address, donationAmt);
+        await contract.connect(donor).donate(cid, mockToken.address, donationAmt);
+        let donationTokenBalance = await contract.getDonationBalance(cid, mockToken.address);
         await expect(donationTokenBalance).to.equal(donationAmt);
       });
 

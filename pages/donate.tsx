@@ -37,8 +37,13 @@ const Upload: NextPage = () => {
   }
 
   async function donate() {
-    console.log(`Going to donate ${donationAmount} to CID ${cid} via contract: ${contract.address}`);
-    await contract.donate(cid, `${contract.address}`, `${donationAmount}000000000000000000`);
+      try {
+          console.log(`Going to donate ${donationAmount} to CID ${cid} via contract: ${contract.address}`);
+          await contract.donate(cid, `${contract.address}`, `${donationAmount}000000000000000000`);
+      }
+      catch(error) {
+        console.error("Error approving: ",error);
+      }
   }
 
   return (
