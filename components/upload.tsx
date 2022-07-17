@@ -117,11 +117,12 @@ function DropzoneButton() {
             required
           />
 
+          {files.length == 0 &&
           <Dropzone
             onDrop={files => setFiles(files)}
             className={classes.dropzone}
             radius="md"
-            accept={[MIME_TYPES.pdf, MIME_TYPES.png]}
+            accept={[MIME_TYPES.pdf]}
             maxSize={30 * 1024 ** 2}
           >
             {(status) => (
@@ -154,6 +155,16 @@ function DropzoneButton() {
               </>
             )}
           </Dropzone>
+          }
+          {files.length > 0 &&
+            <ul>
+              {files.map(function (file) {
+                return <li key={file.lastModified}>{file.path} <Button color="red" compact onClick={files => setFiles([])}>
+      x
+    </Button></li>;
+              })}
+            </ul>
+          }
 
           <Group mt="md">
             <Button type="submit">Upload</Button>
