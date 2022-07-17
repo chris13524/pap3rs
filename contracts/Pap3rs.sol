@@ -9,6 +9,7 @@ import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 contract Pap3rs {
 
     string public _name;
+    string[] private _cids;
     mapping(string => address) public contentOwners;
     mapping(string => mapping(address => uint256)) public tokenBalances;
 
@@ -24,15 +25,17 @@ contract Pap3rs {
     }
 
     function claim(string memory cid) public {
+        require(contentOwners[cid] == address(0),"CID has already been submitted");
         contentOwners[cid] = msg.sender;
+        _cids.push(cid);
+    }
+
+    function listCids() public view returns (string[] memory) {
+        return _cids;
     }
 
     function getOwner(string memory cid) public view returns (address) {
         return contentOwners[cid];
-    }
-
-    function approveDonationToken(address tokenContactAddress, uint256 amount) external {
-        IERC20(tokenContactAddress).approve(address(this), amount);
     }
 
     function donate(string memory cid, address tokenContactAddress, uint256 amount) external {
