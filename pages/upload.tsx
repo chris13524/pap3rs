@@ -1,8 +1,8 @@
 import type { NextPage } from "next";
-import DropzoneButton from "../components/upload";
+import UploadForm from "../components/upload";
 
 const Upload: NextPage = () => {
-  return <DropzoneButton />;
+  return <UploadForm />;
 };
 
 export default Upload;
