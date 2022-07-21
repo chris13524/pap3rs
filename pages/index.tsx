@@ -17,14 +17,12 @@ const Home: NextPage = () => {
       (async () => {
         const groups = [
           { name: "Featured papers", papers: featuredPapers },
-          //TODO: TODO: why is this blowing up with "TypeError: contract.signer.getAddress is not a function" ?
-          // { name: "New papers", papers: await contract.listCids() },
+          { name: "New papers", papers: await contract.listCids() },
         ];
-
         const papers = [];
         for (const group of groups) {
           const newGroup = { name: group.name, papers: [] as { id: string, paper: Paper }[] };
-          for (const paper of featuredPapers) {
+          for (const paper of group.papers) {
             newGroup.papers.push({ id: paper, paper: await retrieveJson<Paper>(paper) });
           }
           papers.push(newGroup);

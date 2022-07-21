@@ -1,5 +1,5 @@
-// This is a script for deploying your contracts. You can adapt it to deploy
-// yours, or create new ones.
+const proxies = require('@tableland/evm/proxies').proxies;
+
 async function main() {
   // This is just a convenience check
   if (network.name === "hardhat") {
@@ -25,12 +25,18 @@ async function main() {
 
   console.log("USDC MockToken contract address:", mockToken.address);
 
-  const Pap3rs = await ethers.getContractFactory("Pap3rs");
-  const contract = await Pap3rs.deploy();
+  const registryAddress =
+    network.name === "localhost" ?
+    "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512" :
+    proxies[network.name];
+  console.log(`Using registryAddress: ${registryAddress}`)
 
+  const Pap3rs = await ethers.getContractFactory("Pap3rs");
+  const contract = await Pap3rs.deploy(registryAddress);
   await contract.deployed();
 
-  console.log("Pap3rs contract address:", contract.address);
+  const tableName = await contract.tableName();
+  console.log(`Pap3rs contract address: ${contract.address}, which created table: ${tableName}`);
 
   // We also save the contract's artifacts and address in the frontend directory
   saveFrontendFiles(contract, mockToken);
