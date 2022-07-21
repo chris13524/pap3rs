@@ -11,7 +11,7 @@ const Layout: NextPage<{ children: ReactNode }> = ({ children }) => {
     <Head>
       <title>Pap3rs</title>
       <meta name="description" content="Academic papers published on IPFS" />
-      <link rel="icon" href="/favicon.png" />
+      <link rel="icon" href="/favicon.ico" />
     </Head>
     <AppShell
       padding={0}
