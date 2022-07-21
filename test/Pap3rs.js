@@ -36,7 +36,7 @@ describe("Pap3rs contract", function () {
       });
 
       it("Claim works as expected", async function () {
-        await contract.connect(author).claim(cid);
+        await contract.connect(author).upload(cid,'Satoshi Nakamoto');
         let ownerAddress = await contract.getOwner(cid);
         expect(ownerAddress).to.equal(author.address);
         let cids = await contract.listCids();
@@ -55,7 +55,7 @@ describe("Pap3rs contract", function () {
 
       it("Donation to cid submitted should work", async function () {
         await mockToken.connect(deployer).transfer(donor.address,donationAmt);
-        await contract.connect(author).claim(cid);
+        await contract.connect(author).upload(cid,'Satoshi Nakamoto');
         await mockToken.connect(donor).approve(contract.address, donationAmt);
         await contract.connect(donor).donate(cid, mockToken.address, donationAmt);
         let donationTokenBalance = await contract.getDonationBalance(cid, mockToken.address);

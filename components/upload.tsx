@@ -38,7 +38,7 @@ function getActiveColor(status: DropzoneStatus, theme: MantineTheme) {
         : theme.black;
 }
 
-async function storeWithProgress(contract, values: { title: string, description: string, references: string[] }, files: File[]) {
+async function storeWithProgress(contract, values: { title: string, description: string, references: string[] }, files: File[], author: string) {
   console.log("Storing files", files);
 
   // when each chunk is stored, update the percentage complete and display
@@ -62,7 +62,7 @@ async function storeWithProgress(contract, values: { title: string, description:
   });
   console.log("metadata CID:", metadata);
 
-  await contract.claim(metadata);
+  await contract.upload(metadata,author);
 
   showNotification({
     title: "Paper published",
@@ -81,8 +81,6 @@ function UploadForm() {
   const { data: account, isError, isLoading, address, isConnected } = useAccount();
 
   const contract = usePapersContract(signer);
-  console.log(contract);
-  console.log(`isConnected=${isConnected}`);
 
   const form = useForm({
     initialValues: {
@@ -93,9 +91,10 @@ function UploadForm() {
   });
 
   const [files, setFiles] = useState<File[]>([]);
+  const [author, setAuthor] = useState("");
 
   const onSubmit = (values: any) => {
-    storeWithProgress(contract, values, files)
+    storeWithProgress(contract, values, files, author)
       .then(cid => router.push(`/paper/${cid}`));
   };
 
@@ -119,6 +118,12 @@ function UploadForm() {
       <form onSubmit={form.onSubmit(onSubmit)}>
         <Stack p="md">
           <Title>Upload Paper</Title>
+
+          <TextInput
+            required
+            label="Author"
+            {...form.getInputProps("author")}
+          />
 
           <TextInput
             required

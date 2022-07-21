@@ -2,8 +2,6 @@
 
 pragma solidity ^0.8.12;
 
-import "hardhat/console.sol";
-
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@tableland/evm/contracts/ITablelandTables.sol";
@@ -28,7 +26,6 @@ contract Pap3rs {
     event Donation(address indexed donor, address indexed spender, uint256 value);
 
     constructor(address registry) {
-        console.log("Deploying Pap3rs with registry %s",registry);
         _name = "Pap3rs";
 
         // comment out rest of constructor if running localhost network.  TODO: will need to get tableland running locally
@@ -53,8 +50,6 @@ contract Pap3rs {
         "_",
         Strings.toString(_metadataTableId)
       );
-
-      console.log("New table created %s",_metadataTable);
     }
 
     function name() public view returns (string memory) {
@@ -65,10 +60,24 @@ contract Pap3rs {
         return _metadataTable;
     }
 
-    function claim(string memory cid) public {
+    function upload(string memory cid, string memory authorName) public {
         require(contentOwners[cid] == address(0),"CID has already been submitted");
         contentOwners[cid] = msg.sender;
         _cids.push(cid);
+
+        _tableland.runSQL(
+          address(this),
+          _metadataTableId,
+          string.concat(
+            "INSERT INTO ",
+            _metadataTable,
+            " (cid, name) VALUES (",
+            cid,
+            ", '",
+            authorName,
+            "')"
+          )
+        );
     }
 
     function listCids() public view returns (string[] memory) {
