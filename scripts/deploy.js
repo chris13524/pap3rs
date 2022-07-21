@@ -26,8 +26,7 @@ async function main() {
   console.log("USDC MockToken contract address:", mockToken.address);
 
   const Pap3rs = await ethers.getContractFactory("Pap3rs");
-  const contract = await Pap3rs.deploy("0x4b48841d4b32C4650E4ABc117A03FE8B51f38F68"); // mumbai registry
-  //const token = await Token.deploy("Store of Value","SOV",1000,18,mockToken.address);
+  const contract = await Pap3rs.deploy();
 
   await contract.deployed();
 
