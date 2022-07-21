@@ -1,4 +1,4 @@
-import { AppShell, Center, Navbar } from "@mantine/core";
+import { MantineProvider, AppShell, Center, Navbar } from "@mantine/core";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { NextPage } from "next";
 import Head from "next/head";
@@ -13,6 +13,7 @@ const Layout: NextPage<{ children: ReactNode }> = ({ children }) => {
       <meta name="description" content="Academic papers published on IPFS" />
       <link rel="icon" href="/favicon.ico" />
     </Head>
+    <MantineProvider theme={{ colorScheme: 'light' }} withGlobalStyles withNormalizeCSS>
     <AppShell
       padding={0}
       navbar={
@@ -25,18 +26,16 @@ const Layout: NextPage<{ children: ReactNode }> = ({ children }) => {
           </Navbar.Section>
           <Navbar.Section>
             <Center><ConnectButton /></Center>
-          </Navbar.Section>
+            </Navbar.Section>
         </Navbar>
       }
-      // header={<Header height={60} p="xs">{
-      //     <></>
-      // }</Header>}
       styles={(theme) => ({
         main: { backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[8] : theme.colors.gray[0] },
       })}
     >
       {children}
     </AppShell>
+    </MantineProvider>
   </>;
 };
 
