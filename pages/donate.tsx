@@ -45,7 +45,6 @@ const Upload: NextPage = () => {
       <Head>
         <title>Donate to Paper</title>
         <meta name="description" content="Donate to Paper" />
-        <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <main className={styles.main}>
