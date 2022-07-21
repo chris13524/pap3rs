@@ -16,8 +16,10 @@ contract Pap3rs {
     event DonationApproval(address indexed owner, address indexed spender, uint256 value);
     event Donation(address indexed donor, address indexed spender, uint256 value);
 
-    constructor() {
+    constructor(address registry) {
         _name = "Pap3rs";
+
+        //_tableland = ITablelandTables(registry);
     }
 
     function name() public view returns (string memory) {
