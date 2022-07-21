@@ -17,7 +17,8 @@ const Home: NextPage = () => {
       (async () => {
         const groups = [
           { name: "Featured papers", papers: featuredPapers },
-          { name: "New papers", papers: await contract.listCids() },
+          //TODO: TODO: why is this blowing up with "TypeError: contract.signer.getAddress is not a function" ?
+          // { name: "New papers", papers: await contract.listCids() },
         ];
 
         const papers = [];
