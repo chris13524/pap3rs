@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { retrieveJson } from "../../utils/ipfs";
 import { Paper } from "../../utils/paper";
+import DonateModal from "../../components/donateModal";
 
 type ResolvedPaper = Paper & { resolvedReferences: (Paper & { cid: string })[] };
 
@@ -47,7 +48,6 @@ const Paper: NextPage = () => {
         <Stack>
           <Text>{paper?.title}</Text>
           <Text>{paper?.description}</Text>
-
           {paper?.resolvedReferences.length ? <>
             <Title order={4}>References</Title>
             <List>
@@ -60,6 +60,7 @@ const Paper: NextPage = () => {
               ))}
             </List>
           </> : <></>}
+          <DonateModal cid={'cid'}/>
         </Stack>
       </ScrollArea>
     </Box>
