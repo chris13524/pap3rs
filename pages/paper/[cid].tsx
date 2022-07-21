@@ -48,16 +48,18 @@ const Paper: NextPage = () => {
           <Text>{paper?.title}</Text>
           <Text>{paper?.description}</Text>
 
-          <Title order={4}>References</Title>
-          <List>
-            {paper?.resolvedReferences?.map(reference => (
-              <List.Item key={reference.cid}>
-                <Anchor component={NextLink} href={`/paper/${reference.cid}`}>
-                  {reference.title}
-                </Anchor>
-              </List.Item>
-            ))}
-          </List>
+          {paper?.resolvedReferences.length ? <>
+            <Title order={4}>References</Title>
+            <List>
+              {paper?.resolvedReferences?.map(reference => (
+                <List.Item key={reference.cid}>
+                  <Anchor component={NextLink} href={`/paper/${reference.cid}`}>
+                    {reference.title}
+                  </Anchor>
+                </List.Item>
+              ))}
+            </List>
+          </> : <></>}
         </Stack>
       </ScrollArea>
     </Box>

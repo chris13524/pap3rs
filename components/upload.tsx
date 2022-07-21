@@ -72,7 +72,7 @@ async function storeWithProgress(contract, values: { title: string, description:
   return metadata;
 }
 
-function DropzoneButton() {
+function UploadForm() {
   const router = useRouter();
   const theme = useMantineTheme();
   const { classes } = useStyles();
@@ -198,4 +198,4 @@ function DropzoneButton() {
   );
 }
 
-export default DropzoneButton;
+export default UploadForm;
