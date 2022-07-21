@@ -1,5 +1,3 @@
-import React, { useEffect, useState } from "react";
-import { Text, Group, Button, createStyles, MantineTheme, useMantineTheme, Stack, Container, Title, TextInput, Textarea, MultiSelect } from "@mantine/core";
 import type { NextPage } from "next";
 import Head from "next/head";
 import styles from "../styles/Home.module.css";
@@ -12,11 +10,14 @@ const Upload: NextPage = () => {
   const { data: signer, isError: isError2, isLoading: isLoading2 } = useSigner();
   const { data: account, isError, isLoading, address, isConnected } = useAccount();
 
-  const [cid, setCid] = useState("");
-  const [donationAmount, setDonationAmount] = useState("");
-
   const contract = usePapersContract(signer);
+  console.log("signer",signer);
+  console.log("contract",contract);
   const mockTokenContract = useMockTokenContract(signer);
+  console.log("mockTokenContract",mockTokenContract);
+
+  let donationAmount = 100;
+  let cid = "bafybeihwynhkv3kkxi7snayboj66vfyqa73wp6uxshogsedwfjoduizgmy";
 
   async function approve() {
     try {
@@ -32,7 +33,7 @@ const Upload: NextPage = () => {
   async function donate() {
     try {
       console.log(`Going to donate ${donationAmount} to CID ${cid} via contract: ${contract.address}`);
-      await contract.donate(cid, `${mockTokenContract.address}`, `${donationAmount}000000000000000000`);
+      await contract.donate(cid, `${contract.address}`, `${donationAmount}000000000000000000`);
     }
     catch(error) {
       console.error("Error approving: ",error);
@@ -41,7 +42,6 @@ const Upload: NextPage = () => {
 
   return (
     <div className={styles.container}>
-        <form>
       <Head>
         <title>Donate to Paper</title>
         <meta name="description" content="Donate to Paper" />
@@ -51,24 +51,27 @@ const Upload: NextPage = () => {
       <main className={styles.main}>
         <h1 className={styles.title}>Donate to Paper</h1>
 
-        <TextInput
-          required
-          label="Paper CID"
-          value={cid}
-          onChange={(e)=>  setCid(e.target.value)}
-        />
-
-        <TextInput
-          required
-          label="Donation Amount"
-          value={donationAmount}
-          onChange={(e)=>  setDonationAmount(e.target.value)}
-        />
-
-        <Button size="md" radius="xl" onClick={approve}>Approve {donationAmount}</Button>
-        <Button size="md" radius="xl" onClick={donate}>Donate</Button>
+        <p className={styles.description}>
+        cid
+          <input type="text" value={cid}/>
+        donationAmount
+          <input type="text" value={donationAmount}/>
+          <button
+            className="btn btn-warning"
+            type="button"
+            onClick={approve}
+          >
+          Approve {donationAmount}
+          </button>
+          <button
+            className="btn btn-warning"
+            type="button"
+            onClick={donate}
+          >
+          Donate {donationAmount}
+          </button>
+        </p>
       </main>
-      </form>
     </div>
   );
 };
