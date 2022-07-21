@@ -1,12 +1,23 @@
 //SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.7;
+pragma solidity ^0.8.12;
 
 import "hardhat/console.sol";
 
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
+import "@openzeppelin/contracts/utils/Strings.sol";
+import "@tableland/evm/contracts/ITablelandTables.sol";
 
 contract Pap3rs {
+
+    ITablelandTables private _tableland;
+    string private _baseURIString = "https://testnet.tableland.network/query?s=";
+    string private _metadataTable;
+    uint256 private _metadataTableId;
+    string private _tablePrefix = "author";
+    // someday we update this with a nuxt app that diplays x,y and
+    // gives you the interface to move x,y.
+    string private _externalURL = "not.implemented.com";
 
     string public _name;
     string[] private _cids;
@@ -16,12 +27,42 @@ contract Pap3rs {
     event DonationApproval(address indexed owner, address indexed spender, uint256 value);
     event Donation(address indexed donor, address indexed spender, uint256 value);
 
-    constructor() {
+    constructor(address registry) {
+        console.log("Deploying Pap3rs with registry %s",registry);
         _name = "Pap3rs";
+
+        // comment out rest of constructor if running localhost network.  TODO: will need to get tableland running locally
+        // https://github.com/tablelandnetwork/local-tableland
+
+        _tableland = ITablelandTables(registry);
+        _metadataTableId = _tableland.createTable(
+        address(this),
+        string.concat(
+          "CREATE TABLE ",
+          _tablePrefix,
+          "_",
+          Strings.toString(block.chainid),
+          " (cid text, name text);"
+        )
+      );
+
+      _metadataTable = string.concat(
+        _tablePrefix,
+        "_",
+        Strings.toString(block.chainid),
+        "_",
+        Strings.toString(_metadataTableId)
+      );
+
+      console.log("New table created %s",_metadataTable);
     }
 
     function name() public view returns (string memory) {
         return _name;
+    }
+
+    function tableName() public view returns (string memory) {
+        return _metadataTable;
     }
 
     function claim(string memory cid) public {

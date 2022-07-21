@@ -1,4 +1,9 @@
 const { expect } = require("chai");
+const proxies = require('@tableland/evm/proxies').proxies;
+const ProxyAddress = require('@tableland/evm/proxies').ProxyAddress;
+
+console.log(proxies);
+console.log(ProxyAddress);
 
 describe("Pap3rs contract", function () {
   let Token;
@@ -12,11 +17,13 @@ describe("Pap3rs contract", function () {
   let cid = "2l3k5j23lk54j23lk4j23lk4";
   let donationAmt = ethers.utils.parseUnits("100", 18);
 
+  const registryAddress = "0x4b48841d4b32C4650E4ABc117A03FE8B51f38F68"; // polygon mumbai
+
   beforeEach(async function () {
     Pap3rs = await ethers.getContractFactory("Pap3rs");
     MockToken = await ethers.getContractFactory("MockToken");
     [deployer, author, donor, ...addrs] = await ethers.getSigners();
-    contract = await Pap3rs.deploy();
+    contract = await Pap3rs.deploy(registryAddress);
     mockToken = await MockToken.deploy("USDC","USDC",1000000);
     await contract.deployed();
     await mockToken.deployed();
