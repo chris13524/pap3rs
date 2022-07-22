@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Container, Modal, Button, Group, NumberInput, Stack, Select } from "@mantine/core";
+import { Container, Modal, Button, Group, NumberInput, Stack, Select, Text } from "@mantine/core";
 import { useBalance, useSigner } from "wagmi";
 import { usePapersContract, useMockTokenContract } from "../utils/contracts";
 import { NextPage } from "next";
@@ -68,6 +68,7 @@ const DonateModal: NextPage<{ cid: string }> = ({ cid }) => {
               ]}
               {...form.getInputProps("mode")}
             />
+            <Text>Wallet balance: {data?.formatted} {data?.symbol}</Text>
 
             <Button type="submit" size="md" radius="xl">Donate {form.values.amount} {data?.symbol}</Button>
           </Stack>
