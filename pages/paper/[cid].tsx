@@ -59,7 +59,7 @@ const Paper: NextPage = () => {
               ))}
             </List>
           </> : <></>}
-          <DonateModal cid={'cid'}/>
+          <DonateModal cid={cid}/>
         </Stack>
       </ScrollArea>
     </Box>
