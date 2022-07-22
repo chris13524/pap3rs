@@ -26,6 +26,7 @@
     "react-dom": "18.2.0",
     "react-use": "^17.4.0",
     "tabler-icons-react": "^1.52.0",
+    "upper-case-first": "^2.0.2",
     "wagmi": "^0.5.9",
     "web3.storage": "^4.3.0"
   },
