@@ -21,29 +21,17 @@ const DonateModal: NextPage<{ cid: string }> = ({ cid }) => {
   const contract = usePapersContract(signer);
   const mockTokenContract = useMockTokenContract(signer);
 
-  // const tokenBalance = useAsync(async () => {
-  //   if (signer) {
-  //     return await mockTokenContract.balanceOf(address.value);
-  //   }
-  // }, [signer]);
-
-  const [tokenData, setTokenData] = useState({});
-  useAsync(async () => {
-    if (address) {
-      let tokenData = {};
-      let tb = await mockTokenContract.balanceOf(address.value);
-      tokenData.balance = formatEther(tb.toString());
-      tokenData.symbol = await mockTokenContract.symbol();
-      let allowance = await mockTokenContract.allowance(address.value, contract.address);
-      tokenData.allowance = formatEther(allowance.toString());
-      setTokenData(tokenData);
+  const tokenData = useAsync(async () => {
+    if (signer) {
+      console.log('test'); // does not run
+      return {
+        balance: formatEther((await mockTokenContract.balanceOf(address.value)).toString()),
+        symbol: await mockTokenContract.symbol(),
+        allowance: formatEther((await mockTokenContract.allowance(address.value, contract.address)).toString()),
+      };
     }
-  }, [address]);
-
-  const token = useToken({
-    address: mockTokenContract.address
-  })
-  console.log(token)
+  }, [signer]);
+  console.log('tokenData outside:',tokenData);
 
   const [opened, setOpened] = useState(false);
 
@@ -97,9 +85,9 @@ const DonateModal: NextPage<{ cid: string }> = ({ cid }) => {
               ]}
               {...form.getInputProps("mode")}
             />
-            <Text>Wallet balance: {tokenData.balance} {tokenData.symbol} ({tokenData.allowance} allowance)</Text>
+            <Text>Wallet balance: {tokenData.value?.balance} {tokenData.value?.symbol} ({tokenData.value?.allowance} allowance)</Text>
 
-            <Button type="submit" size="md" radius="xl">{capitalizeFirst(form.values.mode)} {form.values.amount} {tokenData.symbol}</Button>
+            <Button type="submit" size="md" radius="xl">{capitalizeFirst(form.values.mode)} {form.values.amount} {tokenData.value?.symbol}</Button>
             
           </Stack>
         </form>
