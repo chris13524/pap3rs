@@ -1,14 +1,23 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
-import { Modal, Button, Stack, TextInput } from "@mantine/core";
+import React, { Dispatch, SetStateAction } from "react";
+import { Modal, Button, Stack, TextInput, Badge } from "@mantine/core";
 import { NextPage } from "next";
 import { useForm } from "@mantine/form";
 import { Author } from "../utils/author";
+import { useSigner } from "wagmi";
+import { useAsync } from "react-use";
 
 const CreateAuthorModal: NextPage<{
   openedState: [boolean, Dispatch<SetStateAction<boolean>>],
   name: string,
   onCreate: (author: Author) => void,
 }> = ({ openedState: [opened, setOpened], name, onCreate }) => {
+  const { data: signer } = useSigner();
+  const address = useAsync(async () => {
+    if (signer) {
+      return await signer.getAddress();
+    }
+  }, [signer]);
+
   const onSubmit = (author: Author) => {
     // TODO create it
     setOpened(false);
@@ -26,7 +35,7 @@ const CreateAuthorModal: NextPage<{
     <Modal
       opened={opened}
       onClose={() => setOpened(false)}
-      title="Donate to this paper"
+      title="Create Author"
     >
       <form onSubmit={form.onSubmit(onSubmit)}>
         <Stack>
@@ -38,6 +47,12 @@ const CreateAuthorModal: NextPage<{
           <TextInput
             required
             label="Wallet address"
+            rightSectionWidth={60}
+            rightSection={address.value &&
+              <Badge
+                onClick={() => form.setFieldValue("address", address.value!)}
+                style={{ cursor: "pointer" }}
+              >Me</Badge>}
             {...form.getInputProps("address")}
           />
 

@@ -123,6 +123,7 @@ function UploadForm() {
   });
 
   // TODO can we simplify this?
+  // TODO handle cancel
   const [createAuthorModalName, setCreateAuthorModalName] = useState("");
   const createAuthorModalOpenedState = useState(false);
 
