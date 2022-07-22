@@ -1,63 +1,81 @@
-import React, { useEffect, useState } from "react";
-import { Container, TextInput, Text, Modal, Button, Group } from "@mantine/core";
-
-import { useAccount, useSigner } from "wagmi";
+import React, { useState } from "react";
+import { Container, Modal, Button, Group, NumberInput, Stack, Select } from "@mantine/core";
+import { useBalance, useSigner } from "wagmi";
 import { usePapersContract, useMockTokenContract } from "../utils/contracts";
+import { NextPage } from "next";
+import { parseEther } from "ethers/lib/utils";
+import { useForm } from "@mantine/form";
+import { useAsync } from "react-use";
 
-function DonateModal() {
+const DonateModal: NextPage<{ cid: string }> = ({ cid }) => {
+  const { data: signer } = useSigner();
 
-  const [opened, setOpened] = useState(false);
-
-  const { data: signer, isError: isError2, isLoading: isLoading2 } = useSigner();
-  const { data: account, isError, isLoading, address, isConnected } = useAccount();
-
-  const [donationAmount, setDonationAmount] = useState("");
+  const address = useAsync(async () => {
+    if (signer) {
+      return await signer.getAddress();
+    }
+  }, [signer]);
+  const { data } = useBalance(address.value ? { addressOrName: address.value } : {});
 
   const contract = usePapersContract(signer);
   const mockTokenContract = useMockTokenContract(signer);
 
-  async function approve() {
-    try {
-      let tokenName = await mockTokenContract.name();
-      console.log(`Going to approve ${donationAmount} ${tokenName}`);
-      await mockTokenContract.approve(contract.address, `${donationAmount}000000000000000000`);
-    }
-    catch(error) {
-      console.error("Error approving: ",error);
-    }
-  }
+  const [opened, setOpened] = useState(false);
 
-  async function donate() {
-    try {
-      console.log(`Going to donate ${donationAmount} to CID ${this.props.cid} via contract: ${contract.address}`);
-      await contract.donate(this.props.cid, `${mockTokenContract.address}`, `${donationAmount}000000000000000000`);
+  type FormValues = { amount: number, mode: "donate" | "approve" };
+
+  const onSubmit = async ({ amount: amountEther, mode }: FormValues) => {
+    const amountWei = parseEther(amountEther.toString());
+
+    if (mode == "approve") {
+      const tokenName = await mockTokenContract.name();
+      console.log(`Going to approve ${amountEther} ${tokenName}`);
+      await mockTokenContract.approve(contract.address, amountWei);
     }
-    catch(error) {
-      console.error("Error approving: ",error);
+
+    if (mode == "donate") {
+      console.log(`Going to donate ${amountEther} to CID ${cid} via contract: ${contract.address}`);
+      await contract.donate(cid, `${mockTokenContract.address}`, amountWei);
     }
-  }
+  };
+
+  const form = useForm<FormValues>({
+    initialValues: {
+      amount: 0,
+      mode: "donate",
+    },
+  });
 
   return (
     <Container size="sm">
-    <Modal
-      opened={opened}
-      onClose={() => setOpened(false)}
-      title="Donate to this paper"
-    >
+      <Modal
+        opened={opened}
+        onClose={() => setOpened(false)}
+        title="Donate to this paper"
+      >
+        <form onSubmit={form.onSubmit(onSubmit)}>
+          <Stack>
+            <NumberInput
+              required
+              label="Donation amount"
+              {...form.getInputProps("amount")}
+            />
+            <Select
+              label="Approve or donate?"
+              data={[
+                { value: 'donate', label: 'Donate' },
+                { value: 'approve', label: 'Approve' },
+              ]}
+              {...form.getInputProps("mode")}
+            />
 
-    <TextInput
-      required
-      label="Donation Amount"
-      value={donationAmount}
-      onChange={(e)=>  setDonationAmount(e.target.value)}
-    />
-
-    <Button size="md" radius="xl" onClick={approve}>Approve {donationAmount}</Button>
-    <Button size="md" radius="xl" onClick={donate}>Donate</Button>
-    </Modal>
-        <Group position="center">
-          <Button onClick={() => setOpened(true)}>Donate</Button>
-        </Group>
+            <Button type="submit" size="md" radius="xl">Donate {form.values.amount} {data?.symbol}</Button>
+          </Stack>
+        </form>
+      </Modal>
+      <Group position="center">
+        <Button onClick={() => setOpened(true)}>Donate</Button>
+      </Group>
     </Container>
   );
 }

@@ -77,9 +77,7 @@ function UploadForm() {
   const theme = useMantineTheme();
   const { classes } = useStyles();
 
-  const { data: signer, isError: isError2, isLoading: isLoading2 } = useSigner();
-  const { data: account, isError, isLoading, address, isConnected } = useAccount();
-
+  const { data: signer } = useSigner();
   const contract = usePapersContract(signer);
 
   const form = useForm({
