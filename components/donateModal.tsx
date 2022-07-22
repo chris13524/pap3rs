@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { Container, Modal, Button, Group, NumberInput, Stack, Select, Text } from "@mantine/core";
-import { useBalance, useSigner } from "wagmi";
+import { useBalance, useSigner, useToken } from "wagmi";
 import { usePapersContract, useMockTokenContract } from "../utils/contracts";
 import { NextPage } from "next";
-import { parseEther } from "ethers/lib/utils";
+import { parseEther, formatEther } from "ethers/lib/utils";
 import { useForm } from "@mantine/form";
 import { useAsync } from "react-use";
+import { ethers } from "ethers";
 
 const DonateModal: NextPage<{ cid: string }> = ({ cid }) => {
   const { data: signer } = useSigner();
@@ -19,6 +20,30 @@ const DonateModal: NextPage<{ cid: string }> = ({ cid }) => {
 
   const contract = usePapersContract(signer);
   const mockTokenContract = useMockTokenContract(signer);
+
+  // const tokenBalance = useAsync(async () => {
+  //   if (signer) {
+  //     return await mockTokenContract.balanceOf(address.value);
+  //   }
+  // }, [signer]);
+
+  const [tokenData, setTokenData] = useState({});
+  useAsync(async () => {
+    if (address) {
+      let tokenData = {};
+      let tb = await mockTokenContract.balanceOf(address.value);
+      tokenData.balance = formatEther(tb.toString());
+      tokenData.symbol = await mockTokenContract.symbol();
+      let allowance = await mockTokenContract.allowance(address.value, contract.address);
+      tokenData.allowance = formatEther(allowance.toString());
+      setTokenData(tokenData);
+    }
+  }, [address]);
+
+  const token = useToken({
+    address: mockTokenContract.address
+  })
+  console.log(token)
 
   const [opened, setOpened] = useState(false);
 
@@ -41,10 +66,14 @@ const DonateModal: NextPage<{ cid: string }> = ({ cid }) => {
 
   const form = useForm<FormValues>({
     initialValues: {
-      amount: 0,
+      amount: 100,
       mode: "donate",
     },
   });
+
+  const capitalizeFirst = str => {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  };
 
   return (
     <>
@@ -68,9 +97,10 @@ const DonateModal: NextPage<{ cid: string }> = ({ cid }) => {
               ]}
               {...form.getInputProps("mode")}
             />
-            <Text>Wallet balance: {balance?.formatted} {balance?.symbol}</Text>
+            <Text>Wallet balance: {tokenData.balance} {tokenData.symbol} ({tokenData.allowance} allowance)</Text>
 
-            <Button type="submit" size="md" radius="xl">Donate {form.values.amount} {balance?.symbol}</Button>
+            <Button type="submit" size="md" radius="xl">{capitalizeFirst(form.values.mode)} {form.values.amount} {tokenData.symbol}</Button>
+            
           </Stack>
         </form>
       </Modal>
