@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Text, Group, Button, createStyles, MantineTheme, useMantineTheme, Stack, Container, Title, TextInput, Textarea, MultiSelect } from "@mantine/core";
 import { Dropzone, DropzoneStatus, MIME_TYPES } from "@mantine/dropzone";
 import { CloudUpload } from "tabler-icons-react";
-import { useAccount, useSigner } from "wagmi";
+import { useSigner } from "wagmi";
 import { usePapersContract } from "../utils/contracts";
 import { useForm } from "@mantine/form";
 import { retrieveJson, storeJson, web3Storage } from "../utils/ipfs";
@@ -38,22 +38,22 @@ function getActiveColor(status: DropzoneStatus, theme: MantineTheme) {
         : theme.black;
 }
 
-async function storeWithProgress(contract, values: { title: string, description: string, references: string[] }, files: File[], author: string) {
+async function storeWithProgress(contract: any, values: FormValues, files: File[]) {
   console.log("Storing files", files);
 
   // when each chunk is stored, update the percentage complete and display
   const totalSize = files.map(f => f.size).reduce((a, b) => a + b, 0);
   let uploaded = 0;
 
-  const onStoredChunk = size => {
-    uploaded += size;
-    const pct = totalSize / uploaded;
-    console.log(`Uploading... ${pct.toFixed(2)}% complete`);
-  };
-
   // client.put will invoke our callbacks during the upload
   // and return the root cid when the upload completes
-  const content = await web3Storage.put(files, { onStoredChunk });
+  const content = await web3Storage.put(files, {
+    onStoredChunk: size => {
+      uploaded += size;
+      const pct = totalSize / uploaded;
+      console.log(`Uploading... ${pct.toFixed(2)}% complete`);
+    }
+  });
 
   const metadata = await storeJson<Paper>({
     ...values,
@@ -62,7 +62,7 @@ async function storeWithProgress(contract, values: { title: string, description:
   });
   console.log("metadata CID:", metadata);
 
-  await contract.upload(metadata,author);
+  await contract.upload(metadata, values.author);
 
   showNotification({
     title: "Paper published",
@@ -72,6 +72,13 @@ async function storeWithProgress(contract, values: { title: string, description:
   return metadata;
 }
 
+type FormValues = {
+  author: string,
+  title: string,
+  description: string,
+  references: string[],
+};
+
 function UploadForm() {
   const router = useRouter();
   const theme = useMantineTheme();
@@ -80,20 +87,11 @@ function UploadForm() {
   const { data: signer } = useSigner();
   const contract = usePapersContract(signer);
 
-  const form = useForm({
-    initialValues: {
-      title: "",
-      description: "",
-      references: [],
-    },
-  });
-
   const [files, setFiles] = useState<File[]>([]);
-  const [author, setAuthor] = useState("");
 
-  const onSubmit = (values: any) => {
-    storeWithProgress(contract, values, files, author)
-      .then(cid => router.push(`/paper/${cid}`));
+  const onSubmit = async (values: FormValues) => {
+    const cid = await storeWithProgress(contract, values, files);
+    router.push(`/paper/${cid}`);
   };
 
   type ResolvedPaper = Paper & { cid: string };
@@ -110,6 +108,15 @@ function UploadForm() {
       setPapers(papers);
     })();
   }, []);
+
+  const form = useForm({
+    initialValues: {
+      author: "",
+      title: "",
+      description: "",
+      references: [],
+    },
+  });
 
   return (
     <Container size="sm">
@@ -176,11 +183,11 @@ function UploadForm() {
           }
           {files.length > 0 &&
             <ul>
-              {files.map(function (file) {
-                return <li key={file.lastModified}>{file.path} <Button color="red" compact onClick={files => setFiles([])}>
-                  x
-                </Button></li>;
-              })}
+              {files.map(file => (
+                <li key={file.lastModified}>
+                  {file.name} <Button color="red" compact onClick={() => setFiles([])}>x</Button>
+                </li>
+              ))}
             </ul>
           }
 
