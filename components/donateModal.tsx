@@ -7,6 +7,7 @@ import { parseEther, formatEther } from "ethers/lib/utils";
 import { useForm } from "@mantine/form";
 import { useAsync } from "react-use";
 import { ethers } from "ethers";
+import { upperCaseFirst } from "upper-case-first";
 
 const DonateModal: NextPage<{ cid: string }> = ({ cid }) => {
   const { data: signer } = useSigner();
@@ -59,10 +60,6 @@ const DonateModal: NextPage<{ cid: string }> = ({ cid }) => {
     },
   });
 
-  const capitalizeFirst = str => {
-    return str.charAt(0).toUpperCase() + str.slice(1);
-  };
-
   return (
     <>
       <Modal
@@ -87,7 +84,7 @@ const DonateModal: NextPage<{ cid: string }> = ({ cid }) => {
             />
             <Text>Wallet balance: {tokenData.value?.balance} {tokenData.value?.symbol} ({tokenData.value?.allowance} allowance)</Text>
 
-            <Button type="submit" size="md" radius="xl">{capitalizeFirst(form.values.mode)} {form.values.amount} {tokenData.value?.symbol}</Button>
+            <Button type="submit" size="md" radius="xl">{upperCaseFirst(form.values.mode)} {form.values.amount} {tokenData.value?.symbol}</Button>
             
           </Stack>
         </form>
