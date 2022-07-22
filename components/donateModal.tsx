@@ -15,7 +15,7 @@ const DonateModal: NextPage<{ cid: string }> = ({ cid }) => {
       return await signer.getAddress();
     }
   }, [signer]);
-  const { data } = useBalance(address.value ? { addressOrName: address.value } : {});
+  const { data: balance } = useBalance(address.value ? { addressOrName: address.value } : {});
 
   const contract = usePapersContract(signer);
   const mockTokenContract = useMockTokenContract(signer);
@@ -68,9 +68,9 @@ const DonateModal: NextPage<{ cid: string }> = ({ cid }) => {
               ]}
               {...form.getInputProps("mode")}
             />
-            <Text>Wallet balance: {data?.formatted} {data?.symbol}</Text>
+            <Text>Wallet balance: {balance?.formatted} {balance?.symbol}</Text>
 
-            <Button type="submit" size="md" radius="xl">Donate {form.values.amount} {data?.symbol}</Button>
+            <Button type="submit" size="md" radius="xl">Donate {form.values.amount} {balance?.symbol}</Button>
           </Stack>
         </form>
       </Modal>
