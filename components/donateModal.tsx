@@ -47,7 +47,7 @@ const DonateModal: NextPage<{ cid: string }> = ({ cid }) => {
   });
 
   return (
-    <Container size="sm">
+    <>
       <Modal
         opened={opened}
         onClose={() => setOpened(false)}
@@ -77,7 +77,7 @@ const DonateModal: NextPage<{ cid: string }> = ({ cid }) => {
       <Group position="center">
         <Button onClick={() => setOpened(true)}>Donate</Button>
       </Group>
-    </Container>
+    </>
   );
 }
 
