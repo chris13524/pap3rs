@@ -9,6 +9,8 @@ import { retrieveJson, storeJson, web3Storage } from "../utils/ipfs";
 import { allPapers, Paper } from "../utils/paper";
 import { showNotification } from "@mantine/notifications";
 import { useRouter } from "next/router";
+import { allAuthors, Author } from "../utils/author";
+import CreateAuthorModal from "./CreateAuthorModal";
 
 const useStyles = createStyles((theme) => ({
   dropzone: {
@@ -62,7 +64,7 @@ async function storeWithProgress(contract: any, values: FormValues, files: File[
   });
   console.log("metadata CID:", metadata);
 
-  await contract.upload(metadata, values.author);
+  await contract.upload(metadata, values.authors[0]); // TODO multiple authors
 
   showNotification({
     title: "Paper published",
@@ -73,7 +75,7 @@ async function storeWithProgress(contract: any, values: FormValues, files: File[
 }
 
 type FormValues = {
-  author: string,
+  authors: string[],
   title: string,
   description: string,
   references: string[],
@@ -89,9 +91,9 @@ function UploadForm() {
 
   const [files, setFiles] = useState<File[]>([]);
 
-  const onSubmit = async (values: FormValues) => {
-    const cid = await storeWithProgress(contract, values, files);
-    router.push(`/paper/${cid}`);
+  const onSubmit = (values: FormValues) => {
+    storeWithProgress(contract, values, files)
+      .then(cid => router.push(`/paper/${cid}`));
   };
 
   type ResolvedPaper = Paper & { cid: string };
@@ -109,25 +111,60 @@ function UploadForm() {
     })();
   }, []);
 
-  const form = useForm({
+  const [authors, setAuthors] = useState(allAuthors);
+
+  const form = useForm<FormValues>({
     initialValues: {
-      author: "",
+      authors: [],
       title: "",
       description: "",
       references: [],
     },
   });
 
+  // TODO can we simplify this?
+  const [createAuthorModalName, setCreateAuthorModalName] = useState("");
+  const createAuthorModalOpenedState = useState(false);
+
   return (
     <Container size="sm">
+      {createAuthorModalName &&
+        <CreateAuthorModal
+          openedState={createAuthorModalOpenedState}
+          name={createAuthorModalName}
+          onCreate={author => {
+            // add new author to available authors ()
+            setAuthors(authors => [...authors, author]);
+
+            // update selected author to use new name entered in modal
+            form.setFieldValue("authors", form.values.authors.map(mappedAuthor => {
+              if (mappedAuthor == createAuthorModalName) {
+                return author.name;
+              } else {
+                return mappedAuthor;
+              }
+            }));
+
+            // reset modal state for next interaction
+            setCreateAuthorModalName("");
+          }}
+        />
+      }
       <form onSubmit={form.onSubmit(onSubmit)}>
         <Stack p="md">
           <Title>Upload Paper</Title>
 
-          <TextInput
-            required
-            label="Author"
-            {...form.getInputProps("author")}
+          <MultiSelect
+            data={authors.map(author => ({ label: author.name, value: author.address }))}
+            label="Authors"
+            searchable
+            creatable
+            getCreateLabel={query => `+ Create author ${query}`}
+            onCreate={name => {
+              setCreateAuthorModalName(name);
+              createAuthorModalOpenedState[1](true);
+            }}
+            {...form.getInputProps("authors")}
           />
 
           <TextInput

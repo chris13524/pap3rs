@@ -1,7 +1,6 @@
 import { Text, Box, ScrollArea, List, Title, Stack, Anchor } from "@mantine/core";
 import { NextLink } from "@mantine/next";
 import { NextPage } from "next";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { retrieveJson } from "../../utils/ipfs";
