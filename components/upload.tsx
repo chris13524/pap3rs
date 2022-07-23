@@ -146,7 +146,7 @@ function UploadForm() {
             // update selected author to use new name entered in modal
             form.setFieldValue("authors", form.values.authors.map(mappedAuthor => {
               if (mappedAuthor == createAuthorModalName) {
-                return author.name;
+                return author.address;
               } else {
                 return mappedAuthor;
               }
