@@ -23,16 +23,20 @@ const DonateModal: NextPage<{ cid: string }> = ({ cid }) => {
   const mockTokenContract = useMockTokenContract(signer);
 
   const tokenData = useAsync(async () => {
-    if (signer) {
-      console.log('test'); // does not run
+    if (signer && contract && mockTokenContract ) {
+      console.log(`cid=${cid}`)
+      let result = await contract.getDonationBalance(cid, mockTokenContract.address);
+      console.log(`${cid},${mockTokenContract.address}`)
+      let something = formatEther(result.toString());
+      console.log(something)
       return {
         balance: formatEther((await mockTokenContract.balanceOf(address.value)).toString()),
         symbol: await mockTokenContract.symbol(),
         allowance: formatEther((await mockTokenContract.allowance(address.value, contract.address)).toString()),
+        donationAmount: something,
       };
     }
-  }, [signer]);
-  console.log('tokenData outside:',tokenData);
+  }, [signer, contract, mockTokenContract]);
 
   const [opened, setOpened] = useState(false);
 
@@ -48,8 +52,12 @@ const DonateModal: NextPage<{ cid: string }> = ({ cid }) => {
     }
 
     if (mode == "donate") {
+      const tokenName = await mockTokenContract.name();
+      console.log(`Going to approve ${amountEther} ${tokenName}`);
+      await mockTokenContract.approve(contract.address, amountWei);
       console.log(`Going to donate ${amountEther} to CID ${cid} via contract: ${contract.address}`);
       await contract.donate(cid, `${mockTokenContract.address}`, amountWei);
+
     }
   };
 
@@ -74,23 +82,14 @@ const DonateModal: NextPage<{ cid: string }> = ({ cid }) => {
               label="Donation amount"
               {...form.getInputProps("amount")}
             />
-            <Select
-              label="Approve or donate?"
-              data={[
-                { value: 'donate', label: 'Donate' },
-                { value: 'approve', label: 'Approve' },
-              ]}
-              {...form.getInputProps("mode")}
-            />
-            <Text>Wallet balance: {tokenData.value?.balance} {tokenData.value?.symbol} ({tokenData.value?.allowance} allowance)</Text>
-
             <Button type="submit" size="md" radius="xl">{upperCaseFirst(form.values.mode)} {form.values.amount} {tokenData.value?.symbol}</Button>
-            
+            <Text>Wallet balance: <strong>{tokenData.value?.balance}</strong> {tokenData.value?.symbol}</Text>
           </Stack>
         </form>
       </Modal>
       <Group position="center">
         <Button onClick={() => setOpened(true)}>Donate</Button>
+        <Text>{tokenData.value?.donationAmount} donated so far!</Text>
       </Group>
     </>
   );
