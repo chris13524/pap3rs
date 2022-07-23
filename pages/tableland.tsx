@@ -23,6 +23,7 @@ const Tableland: NextPage<{ cid: string }> = ({ cid }) => {
         let connection = await connect({ network: "testnet", chain: "polygon-mumbai" });
         const table = await connection.create(model.tableSchema, model.tableName);
         console.log(`Created TL table ${table.name}`, table);
+        console.log(`View transaction: https://mumbai.polygonscan.com/tx/${table.txnHash}}`); // TODO: don't hardcode to polygonscan url
     }
 
     async function writeToTable() {
@@ -30,6 +31,7 @@ const Tableland: NextPage<{ cid: string }> = ({ cid }) => {
         let connection = await connect({ network: "testnet", chain: "polygon-mumbai" });
         const write = await connection.write(model.sql);
         console.log(`Response from write: ${model.sql}:`, write);
+        console.log(`View transaction: https://mumbai.polygonscan.com/tx/${write.hash}}`); // TODO: don't hardcode to polygonscan url
     }
 
     async function queryTable() {
