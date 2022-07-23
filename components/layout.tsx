@@ -1,4 +1,4 @@
-import { MantineProvider, AppShell, Center, Navbar } from "@mantine/core";
+import { MantineProvider, AppShell, Center, Header, Group } from "@mantine/core";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { NextPage } from "next";
 import Head from "next/head";
@@ -13,24 +13,28 @@ const Layout: NextPage<{ children: ReactNode }> = ({ children }) => {
       <meta name="description" content="Academic papers published on IPFS" />
       <link rel="icon" href="/favicon.ico" />
     </Head>
-    <MantineProvider theme={{ colorScheme: "light" }} withGlobalStyles withNormalizeCSS>
+    <MantineProvider theme={{ colorScheme: "dark" }} withGlobalStyles withNormalizeCSS>
       <AppShell
         padding={0}
-        navbar={
-          <Navbar width={{ base: 300 }} p="xs">
-            <Navbar.Section>
-              <Center><Logo /></Center>
-            </Navbar.Section>
-            <Navbar.Section grow mt="xs">
+        header={
+          <Header height={60}>
+            <Group sx={{ height: '100%' }} px={20} position="apart">
+              <Logo />
               <NavLinks />
-            </Navbar.Section>
-            <Navbar.Section>
-              <Center><ConnectButton /></Center>
-            </Navbar.Section>
-          </Navbar>
+              <ConnectButton />
+            </Group>
+          </Header>
         }
-        styles={(theme) => ({
-          main: { backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[8] : theme.colors.gray[0] },
+        styles={theme => ({
+          root: {
+            height: "100vh",
+            backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[8] : theme.colors.gray[0],
+            display: "flex",
+            flexDirection: "column",
+          },
+          body: {
+            flexGrow: 1,
+          },
         })}
       >
         {children}

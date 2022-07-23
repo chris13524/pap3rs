@@ -42,7 +42,7 @@ function getActiveColor(status: DropzoneStatus, theme: MantineTheme) {
 
 async function storeWithProgress(contract: any, values: FormValues, files: File[]) {
   console.log("Storing files", files);
-  
+
   // when each chunk is stored, update the percentage complete and display
   const totalSize = files.map(f => f.size).reduce((a, b) => a + b, 0);
   let uploaded = 0;
@@ -146,7 +146,7 @@ function UploadForm() {
             // update selected author to use new name entered in modal
             form.setFieldValue("authors", form.values.authors.map(mappedAuthor => {
               if (mappedAuthor == createAuthorModalName) {
-                return author.name;
+                return author.address;
               } else {
                 return mappedAuthor;
               }
