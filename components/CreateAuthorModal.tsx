@@ -61,6 +61,6 @@ const CreateAuthorModal: NextPage<{
       </form>
     </Modal>
   );
-}
+};
 
 export default CreateAuthorModal;

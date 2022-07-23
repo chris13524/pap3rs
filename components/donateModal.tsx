@@ -24,7 +24,7 @@ const DonateModal: NextPage<{ cid: string }> = ({ cid }) => {
 
   const tokenData = useAsync(async () => {
     if (signer) {
-      console.log('test'); // does not run
+      console.log("test"); // does not run
       return {
         balance: formatEther((await mockTokenContract.balanceOf(address.value)).toString()),
         symbol: await mockTokenContract.symbol(),
@@ -32,7 +32,7 @@ const DonateModal: NextPage<{ cid: string }> = ({ cid }) => {
       };
     }
   }, [signer]);
-  console.log('tokenData outside:',tokenData);
+  console.log("tokenData outside:",tokenData);
 
   const [opened, setOpened] = useState(false);
 
@@ -77,8 +77,8 @@ const DonateModal: NextPage<{ cid: string }> = ({ cid }) => {
             <Select
               label="Approve or donate?"
               data={[
-                { value: 'donate', label: 'Donate' },
-                { value: 'approve', label: 'Approve' },
+                { value: "donate", label: "Donate" },
+                { value: "approve", label: "Approve" },
               ]}
               {...form.getInputProps("mode")}
             />
@@ -94,6 +94,6 @@ const DonateModal: NextPage<{ cid: string }> = ({ cid }) => {
       </Group>
     </>
   );
-}
+};
 
 export default DonateModal;

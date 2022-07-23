@@ -60,8 +60,8 @@ const Paper: NextPage = () => {
                     "&:hover": {
                       backgroundColor: "darkgray",
                       color: "white",
-                    }
-                  }
+                    },
+                  },
                 }}
                 component={NextLink} href={`/author/${author.cid}`} >
                 {author.name}
