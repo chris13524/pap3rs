@@ -54,7 +54,7 @@ async function storeWithProgress(contract: any, values: FormValues, files: File[
       uploaded += size;
       const pct = totalSize / uploaded;
       console.log(`Uploading... ${pct.toFixed(2)}% complete`);
-    }
+    },
   });
 
   const metadata = await storeJson<Paper>({
