@@ -8,7 +8,7 @@ import { Paper } from "../../utils/paper";
 import DonateModal from "../../components/donateModal";
 import { Author } from "../../utils/author";
 
-type ResolvedPaper = Paper & { resolvedReferences: (Paper & { cid: string })[], resolvedAuthors: (Author & { cid: string })[] };
+type ResolvedPaper = Paper & { resolvedReferences: (Paper & { cid: string })[], resolvedReviews: (Paper & { cid: string })[], resolvedAuthors: (Author & { cid: string })[] };
 
 const Paper: NextPage = () => {
   const router = useRouter();
@@ -18,13 +18,20 @@ const Paper: NextPage = () => {
   useEffect(() => {
     (async () => {
       if (cid) {
-        const paper = Object.assign(await retrieveJson<ResolvedPaper>(cid), { resolvedReferences: [], resolvedAuthors: [] });
-        for (const reference of paper.references) {
-          paper.resolvedReferences.push(Object.assign(await retrieveJson<Paper>(reference), { cid: reference }));
-
-          paper.resolvedAuthors.push({ name: "Vitalik Buterin", address: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045", cid: "aaaa" });
-          paper.resolvedAuthors.push({ name: "Satoshi Nakamoto", address: "yyyy", cid: "bbbb" });
+        const paper = Object.assign(await retrieveJson<ResolvedPaper>(cid), { resolvedReferences: [], resolvedReviews: [], resolvedAuthors: [] });
+        for (const cid of paper.references) {
+          paper.resolvedReferences.push(Object.assign(await retrieveJson<Paper>(cid), { cid: cid }));
         }
+        // for (const cid of paper.reviews) {
+        //   paper.resolvedReviews.push(Object.assign(await retrieveJson<Paper>(cid), { cid: cid }));
+        // }
+
+        paper.resolvedAuthors.push({ name: "Vitalik Buterin", address: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045", cid: "aaaa" });
+        paper.resolvedAuthors.push({ name: "Satoshi Nakamoto", address: "yyyy", cid: "bbbb" });
+        paper.resolvedReviews.push({ title: "Other paper" } as (Paper & { cid: string }));
+        paper.resolvedReviews.push({ title: "Other paper" } as (Paper & { cid: string }));
+        paper.resolvedReviews.push({ title: "Other paper" } as (Paper & { cid: string }));
+        paper.resolvedReviews.push({ title: "Other paper" } as (Paper & { cid: string }));
         setPaper(paper);
       }
     })();
@@ -47,7 +54,8 @@ const Paper: NextPage = () => {
         flexShrink: 1,
         maxWidth: "300px",
       }}>
-        <Stack>
+        <Stack spacing="lg">
+          <Title>{paper?.title}</Title>
           <Group>
             {paper?.resolvedAuthors.map(author => (
               <Badge key={author.cid}
@@ -67,7 +75,7 @@ const Paper: NextPage = () => {
               </Badge>
             ))}
           </Group>
-          <Text>{paper?.title}</Text>
+          <DonateModal cid={cid} />
           <Text>{paper?.description}</Text>
           {paper?.resolvedReferences.length ? <>
             <Title order={4}>References</Title>
@@ -81,7 +89,18 @@ const Paper: NextPage = () => {
               ))}
             </List>
           </> : <></>}
-          <DonateModal cid={cid} />
+          {paper?.resolvedReviews.length ? <>
+            <Title order={4}>Reviews</Title>
+            <List>
+              {paper?.resolvedReviews?.map(review => (
+                <List.Item key={review.cid}>
+                  <Anchor component={NextLink} href={`/paper/${review.cid}`}>
+                    {review.title}
+                  </Anchor>
+                </List.Item>
+              ))}
+            </List>
+          </> : <></>}
         </Stack>
       </ScrollArea>
     </Box>

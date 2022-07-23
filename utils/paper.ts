@@ -10,6 +10,7 @@ export type Paper = {
   content: string,
   contentFileName: string,
   references: string[],
+  reviews: string[],
 };
 
 export type PaperWithId = Paper & { id: string };

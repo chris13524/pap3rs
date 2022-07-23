@@ -79,6 +79,7 @@ type FormValues = {
   title: string,
   description: string,
   references: string[],
+  reviews: string[],
 };
 
 function UploadForm() {
@@ -125,6 +126,7 @@ function UploadForm() {
       title: "",
       description: "",
       references: [],
+      reviews: [],
     },
   });
 
@@ -242,6 +244,14 @@ function UploadForm() {
             searchable
             nothingFound="Nothing found"
             {...form.getInputProps("references")}
+          />
+
+          <MultiSelect
+            data={papers.map(paper => ({ label: paper.title, value: paper.cid }))}
+            label="Reviews"
+            searchable
+            nothingFound="Nothing found"
+            {...form.getInputProps("reviews")}
           />
 
           <Group mt="md">

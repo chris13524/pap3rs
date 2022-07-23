@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Modal, Button, Group, NumberInput, Stack, Text } from "@mantine/core";
+import { Modal, Button, Group, NumberInput, Stack, Text, Space } from "@mantine/core";
 import { useSigner } from "wagmi";
 import { usePapersContract, useMockTokenContract } from "../utils/contracts";
 import { NextPage } from "next";
@@ -82,6 +82,7 @@ const DonateModal: NextPage<{ cid: string }> = ({ cid }) => {
         </form>
       </Modal>
       <Group position="center">
+        <Space />
         <Button
           onClick={() => setOpened(true)}
           leftIcon={<Gift />}>

@@ -1,4 +1,4 @@
-import { MantineProvider, AppShell, Center, Header, Group } from "@mantine/core";
+import { MantineProvider, AppShell, Center, Header, Group, ScrollArea } from "@mantine/core";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { NextPage } from "next";
 import Head from "next/head";
@@ -34,6 +34,7 @@ const Layout: NextPage<{ children: ReactNode }> = ({ children }) => {
           },
           body: {
             flexGrow: 1,
+            height: "calc(100% - 60px)",
           },
         })}
       >
