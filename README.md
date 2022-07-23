@@ -31,5 +31,4 @@ npx hardhat run --network localhost scripts/deploy.js
 npx hardhat console --network localhost
 [owner, addr1, addr2, ...addrs] = await ethers.getSigners();
 Pap3rs = await ethers.getContractFactory("Pap3rs");
-c = await ethers.getContractAt("Pap3rs","0x5FbDB2315678afecb367f032d93F642f64180aa3");
-name = await c.name();
+c = await ethers.getContractAt("Pap3rs","0x5FC8d32690cc91D4c39d9d3abcBD16989F875707");

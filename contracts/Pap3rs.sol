@@ -2,6 +2,8 @@
 
 pragma solidity ^0.8.12;
 
+import "hardhat/console.sol";
+
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@tableland/evm/contracts/ITablelandTables.sol";
@@ -31,25 +33,25 @@ contract Pap3rs {
         // comment out rest of constructor if running localhost network.  TODO: will need to get tableland running locally
         // https://github.com/tablelandnetwork/local-tableland
 
-        _tableland = ITablelandTables(registry);
-        _metadataTableId = _tableland.createTable(
-        address(this),
-        string.concat(
-          "CREATE TABLE ",
-          _tablePrefix,
-          "_",
-          Strings.toString(block.chainid),
-          " (cid text, name text);"
-        )
-      );
+      //   _tableland = ITablelandTables(registry);
+      //   _metadataTableId = _tableland.createTable(
+      //   address(this),
+      //   string.concat(
+      //     "CREATE TABLE ",
+      //     _tablePrefix,
+      //     "_",
+      //     Strings.toString(block.chainid),
+      //     " (cid text, name text);"
+      //   )
+      // );
 
-      _metadataTable = string.concat(
-        _tablePrefix,
-        "_",
-        Strings.toString(block.chainid),
-        "_",
-        Strings.toString(_metadataTableId)
-      );
+      // _metadataTable = string.concat(
+      //   _tablePrefix,
+      //   "_",
+      //   Strings.toString(block.chainid),
+      //   "_",
+      //   Strings.toString(_metadataTableId)
+      // );
     }
 
     function name() public view returns (string memory) {
@@ -65,37 +67,43 @@ contract Pap3rs {
         contentOwners[cid] = msg.sender;
         _cids.push(cid);
 
-        _tableland.runSQL(
-          address(this),
-          _metadataTableId,
-          string.concat(
-            "INSERT INTO ",
-            _metadataTable,
-            " (cid, name) VALUES (",
-            cid,
-            ", '",
-            authorName,
-            "')"
-          )
-        );
+        // _tableland.runSQL(
+        //   address(this),
+        //   _metadataTableId,
+        //   string.concat(
+        //     "INSERT INTO ",
+        //     _metadataTable,
+        //     " (cid, name) VALUES (",
+        //     cid,
+        //     ", '",
+        //     authorName,
+        //     "')"
+        //   )
+        // );
     }
 
     function listCids() public view returns (string[] memory) {
+        console.log("listCids() returns: %s", 'sdfdsfdsfdf');
         return _cids;
     }
 
     function getOwner(string memory cid) public view returns (address) {
-        return contentOwners[cid];
+        address cidOwner = contentOwners[cid];
+        console.log("getOwner(%s) returns: %s", cid, cidOwner);
+        return cidOwner;
     }
 
     function donate(string memory cid, address tokenContactAddress, uint256 amount) external {
+        console.log("%s will donate %s to %s", msg.sender, amount, cid);
         require(contentOwners[cid] != address(0),"CID must have been contributed to donate to");
         IERC20(tokenContactAddress).transferFrom(msg.sender, address(this), amount);
         tokenBalances[cid][tokenContactAddress] += amount;
     }
 
-    function getDonationBalance(string memory cid,address tokenContactAddress) public view returns (uint256) {
-        return tokenBalances[cid][tokenContactAddress];
+    function getDonationBalance(string memory cid,address tokenContractAddress) public view returns (uint256) {
+        uint256 balance = tokenBalances[cid][tokenContractAddress];
+        console.log("request for token balance for cid=%s on token %s = %s",cid,tokenContractAddress,balance);
+        return balance;
     }
 
 }

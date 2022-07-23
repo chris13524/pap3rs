@@ -25,6 +25,11 @@ async function main() {
 
   console.log("USDC MockToken contract address:", mockToken.address);
 
+  // const TablelandTables = await ethers.getContractFactory("TablelandTables");
+  // const tablelandTablesContract = await TablelandTables.deploy();
+  // await tablelandTablesContract.deployed();
+  // console.log(`Deployed tablelandTablesContract at: ${tablelandTablesContract.address}`);
+
   const registryAddress =
     network.name === "localhost" ?
     "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512" :
