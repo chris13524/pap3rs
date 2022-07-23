@@ -24,19 +24,15 @@ const DonateModal: NextPage<{ cid: string }> = ({ cid }) => {
 
   const tokenData = useAsync(async () => {
     if (signer && contract && mockTokenContract ) {
-      console.log(`cid=${cid}`)
-      let result = await contract.getDonationBalance(cid, mockTokenContract.address);
-      console.log(`${cid},${mockTokenContract.address}`)
-      let something = formatEther(result.toString());
-      console.log(something)
       return {
         balance: formatEther((await mockTokenContract.balanceOf(address.value)).toString()),
         symbol: await mockTokenContract.symbol(),
         allowance: formatEther((await mockTokenContract.allowance(address.value, contract.address)).toString()),
-        donationAmount: something,
+        donationAmount: formatEther((await contract.getDonationBalance(cid, mockTokenContract.address)).toString()),
       };
     }
   }, [signer, contract, mockTokenContract]);
+  console.log("tokenData outside:",tokenData);
 
   const [opened, setOpened] = useState(false);
 
@@ -93,6 +89,6 @@ const DonateModal: NextPage<{ cid: string }> = ({ cid }) => {
       </Group>
     </>
   );
-}
+};
 
 export default DonateModal;
