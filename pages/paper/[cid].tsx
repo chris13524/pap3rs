@@ -22,7 +22,7 @@ const Paper: NextPage = () => {
         for (const reference of paper.references) {
           paper.resolvedReferences.push(Object.assign(await retrieveJson<Paper>(reference), { cid: reference }));
 
-          paper.resolvedAuthors.push({ name: "Vitalik", address: "xxxx", cid: "aaaa" });
+          paper.resolvedAuthors.push({ name: "Vitalik Buterin", address: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045", cid: "aaaa" });
           paper.resolvedAuthors.push({ name: "Satoshi", address: "yyyy", cid: "bbbb" });
         }
         setPaper(paper);
