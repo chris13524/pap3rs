@@ -156,6 +156,7 @@ function UploadForm() {
           <Title>Upload Paper</Title>
 
           <MultiSelect
+            required
             data={authors.map(author => ({ label: author.name, value: author.address }))}
             label="Authors"
             searchable
