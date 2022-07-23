@@ -21,8 +21,7 @@ const { chains, provider } = configureChains(
   //   alchemyProvider({ alchemyId: process.env.ALCHEMY_ID }),
   //   publicProvider(),
   // ],
-  [chain.localhost],
-  //[chain.polygonMumbai],
+  [chain.localhost, chain.polygonMumbai],
   [publicProvider()],
 );
 
