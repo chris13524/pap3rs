@@ -1,4 +1,4 @@
-import { Stack, Title, Text, Grid, Space, Container, ScrollArea } from "@mantine/core";
+import { Stack, Title, Text, Grid, Space, Container, ScrollArea, LoadingOverlay, Loader } from "@mantine/core";
 import type { NextPage } from "next";
 import { useSigner } from "wagmi";
 import { usePapersContract } from "../utils/contracts";
@@ -42,20 +42,26 @@ const Home: NextPage = () => {
 
   return (
     <ScrollArea style={{
-      height: "calc(100% - 60px)",
+      height: "calc(100vh - 60px)",
     }}>
       <Container>
         <Stack p="md">
-          <Space h="md" />
-          <Text>Academic papers published on IPFS. Papers can link to each other using metadata, are versioned on Ceramic, and a smart contract can be used to fund research projects.</Text>
-
-          {papers.value?.map(group => (
-            <Fragment key={group.name}>
-              <Space />
-              <Title order={2}>{group.name}</Title>
-              <PaperCard papers={group.papers} />
-            </Fragment>
-          ))}
+          {papers.loading
+            ? <Loader size={100} style={{ margin: "100px auto" }} />
+            : papers.error
+              ? <Text>{papers.error.message}</Text>
+              : <>
+                <Space h="md" />
+                <Text>Academic papers published on IPFS. Papers can link to each other using metadata, are versioned on Ceramic, and a smart contract can be used to fund research projects.</Text>
+                {papers.value?.map(group => (
+                  <Fragment key={group.name}>
+                    <Space />
+                    <Title order={2}>{group.name}</Title>
+                    <PaperCard papers={group.papers} />
+                  </Fragment>
+                ))}
+              </>
+          }
         </Stack >
       </Container>
     </ScrollArea>

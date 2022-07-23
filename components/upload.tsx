@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Text, Group, Button, createStyles, MantineTheme, useMantineTheme, Stack, Container, Title, TextInput, Textarea, MultiSelect } from "@mantine/core";
+import { Text, Group, Button, createStyles, MantineTheme, useMantineTheme, Stack, Container, Title, TextInput, Textarea, MultiSelect, LoadingOverlay } from "@mantine/core";
 import { Dropzone, DropzoneStatus, MIME_TYPES } from "@mantine/dropzone";
 import { CloudUpload } from "tabler-icons-react";
 import { useSigner } from "wagmi";
@@ -92,7 +92,9 @@ function UploadForm() {
 
   const [files, setFiles] = useState<File[]>([]);
 
+  const [uploading, setUploading] = useState(false);
   const onSubmit = (values: FormValues) => {
+    setUploading(true);
     storeWithProgress(contract, values, files)
       .then(cid => router.push(`/paper/${cid}`));
   };
@@ -136,130 +138,133 @@ function UploadForm() {
   const createAuthorModalOpenedState = useState(false);
 
   return (
-    <Container size="sm">
-      {createAuthorModalName &&
-        <CreateAuthorModal
-          openedState={createAuthorModalOpenedState}
-          name={createAuthorModalName}
-          onCreate={author => {
-            // add new author to available authors ()
-            setAuthors(authors => [...authors, author]);
+    <div style={{ position: "relative", minHeight: "100%" }}>
+      <LoadingOverlay visible={uploading} loaderProps={{ size: 100 }} />
+      <Container size="sm">
+        {createAuthorModalName &&
+          <CreateAuthorModal
+            openedState={createAuthorModalOpenedState}
+            name={createAuthorModalName}
+            onCreate={author => {
+              // add new author to available authors ()
+              setAuthors(authors => [...authors, author]);
 
-            // update selected author to use new name entered in modal
-            form.setFieldValue("authors", form.values.authors.map(mappedAuthor => {
-              if (mappedAuthor == createAuthorModalName) {
-                return author.address;
-              } else {
-                return mappedAuthor;
-              }
-            }));
+              // update selected author to use new name entered in modal
+              form.setFieldValue("authors", form.values.authors.map(mappedAuthor => {
+                if (mappedAuthor == createAuthorModalName) {
+                  return author.address;
+                } else {
+                  return mappedAuthor;
+                }
+              }));
 
-            // reset modal state for next interaction
-            setCreateAuthorModalName("");
-          }}
-        />
-      }
-      <form onSubmit={form.onSubmit(onSubmit)}>
-        <Stack p="md">
-          <Title>Upload Paper</Title>
-
-          <MultiSelect
-            required
-            data={authors.map(author => ({ label: author.name, value: author.address }))}
-            label="Authors"
-            searchable
-            creatable
-            getCreateLabel={query => `+ Create author ${query}`}
-            onCreate={name => {
-              setCreateAuthorModalName(name);
-              createAuthorModalOpenedState[1](true);
+              // reset modal state for next interaction
+              setCreateAuthorModalName("");
             }}
-            {...form.getInputProps("authors")}
           />
+        }
+        <form onSubmit={form.onSubmit(onSubmit)}>
+          <Stack p="md">
+            <Title>Upload Paper</Title>
 
-          <TextInput
-            required
-            label="Title"
-            {...form.getInputProps("title")}
-          />
+            <MultiSelect
+              required
+              data={authors.map(author => ({ label: author.name, value: author.address }))}
+              label="Authors"
+              searchable
+              creatable
+              getCreateLabel={query => `+ Create author ${query}`}
+              onCreate={name => {
+                setCreateAuthorModalName(name);
+                createAuthorModalOpenedState[1](true);
+              }}
+              {...form.getInputProps("authors")}
+            />
 
-          <Textarea
-            label="Description"
-            {...form.getInputProps("description")}
-            required
-          />
+            <TextInput
+              required
+              label="Title"
+              {...form.getInputProps("title")}
+            />
 
-          {files.length == 0 &&
-            <Dropzone
-              onDrop={files => setFiles(files)}
-              className={classes.dropzone}
-              radius="md"
-              accept={[MIME_TYPES.pdf]}
-              maxSize={30 * 1024 ** 2}
-            >
-              {(status) => (
-                <>
-                  <div style={{ pointerEvents: "none" }}>
-                    <Group position="center">
-                      <CloudUpload size={50} color={getActiveColor(status, theme)} />
-                    </Group>
-                    <Text
-                      align="center"
-                      weight={700}
-                      size="lg"
-                      mt="xl"
-                      sx={{ color: getActiveColor(status, theme) }}
-                    >
-                      {status.accepted
-                        ? "Drop files here"
-                        : status.rejected
-                          ? "Pdf file less than 30mb"
-                          : "Upload paper"}
-                    </Text>
-                    <Text align="center" size="sm" mt="xs" color="dimmed">
-                      Drag&apos;n&apos;drop files here to upload. We can accept only <i>.pdf</i> files that
-                      are less than 30mb in size.
-                    </Text>
-                  </div>
-                  <Button className={classes.control} size="md" radius="xl">
-                    Select files
-                  </Button>
-                </>
-              )}
-            </Dropzone>
-          }
-          {files.length > 0 &&
-            <ul>
-              {files.map(file => (
-                <li key={file.lastModified}>
-                  {file.name} <Button color="red" compact onClick={() => setFiles([])}>x</Button>
-                </li>
-              ))}
-            </ul>
-          }
+            <Textarea
+              label="Description"
+              {...form.getInputProps("description")}
+              required
+            />
 
-          <MultiSelect
-            data={papers.map(paper => ({ label: paper.title, value: paper.cid }))}
-            label="References"
-            searchable
-            nothingFound="Nothing found"
-            {...form.getInputProps("references")}
-          />
+            {files.length == 0 &&
+              <Dropzone
+                onDrop={files => setFiles(files)}
+                className={classes.dropzone}
+                radius="md"
+                accept={[MIME_TYPES.pdf]}
+                maxSize={30 * 1024 ** 2}
+              >
+                {(status) => (
+                  <>
+                    <div style={{ pointerEvents: "none" }}>
+                      <Group position="center">
+                        <CloudUpload size={50} color={getActiveColor(status, theme)} />
+                      </Group>
+                      <Text
+                        align="center"
+                        weight={700}
+                        size="lg"
+                        mt="xl"
+                        sx={{ color: getActiveColor(status, theme) }}
+                      >
+                        {status.accepted
+                          ? "Drop files here"
+                          : status.rejected
+                            ? "Pdf file less than 30mb"
+                            : "Upload paper"}
+                      </Text>
+                      <Text align="center" size="sm" mt="xs" color="dimmed">
+                        Drag&apos;n&apos;drop files here to upload. We can accept only <i>.pdf</i> files that
+                        are less than 30mb in size.
+                      </Text>
+                    </div>
+                    <Button className={classes.control} size="md" radius="xl">
+                      Select files
+                    </Button>
+                  </>
+                )}
+              </Dropzone>
+            }
+            {files.length > 0 &&
+              <ul>
+                {files.map(file => (
+                  <li key={file.lastModified}>
+                    {file.name} <Button color="red" compact onClick={() => setFiles([])}>x</Button>
+                  </li>
+                ))}
+              </ul>
+            }
 
-          <MultiSelect
-            data={papers.map(paper => ({ label: paper.title, value: paper.cid }))}
-            label="Reviews"
-            searchable
-            nothingFound="Nothing found"
-            {...form.getInputProps("reviews")}
-          />
+            <MultiSelect
+              data={papers.map(paper => ({ label: paper.title, value: paper.cid }))}
+              label="References"
+              searchable
+              nothingFound="Nothing found"
+              {...form.getInputProps("references")}
+            />
 
-          <Group mt="md">
-            <Button type="submit">Upload</Button>
-          </Group>
-        </Stack>
-      </form>
-    </Container>
+            <MultiSelect
+              data={papers.map(paper => ({ label: paper.title, value: paper.cid }))}
+              label="Reviews"
+              searchable
+              nothingFound="Nothing found"
+              {...form.getInputProps("reviews")}
+            />
+
+            <Group mt="md">
+              <Button type="submit">Upload</Button>
+            </Group>
+          </Stack>
+        </form>
+      </Container>
+    </div>
   );
 }
 

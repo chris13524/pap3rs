@@ -1,4 +1,4 @@
-import { Text, Box, ScrollArea, List, Title, Stack, Anchor, Group, Badge } from "@mantine/core";
+import { Text, Box, ScrollArea, List, Title, Stack, Anchor, Group, Badge, Loader, Center } from "@mantine/core";
 import { NextLink } from "@mantine/next";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
@@ -38,6 +38,7 @@ const Paper: NextPage = () => {
   }, [cid]);
 
   const src = paper ? `https://${paper.content}.ipfs.dweb.link/${paper.contentFileName}` : undefined;
+  const [iframeLoading, setIframeLoading] = useState(true);
 
   return (
     <Box style={{
@@ -45,11 +46,25 @@ const Paper: NextPage = () => {
       flexDirection: "row",
       height: "100%",
     }}>
-      <iframe key={src} src={src} style={{
-        display: "block",
+      <div style={{
         width: "100%",
-        border: 0,
-      }} />
+      }}>
+        {iframeLoading &&
+          <Center>
+            <Loader size={100} style={{ margin: "100px auto" }} />
+          </Center>
+        }
+        <iframe
+          onLoad={() => setIframeLoading(false)}
+          src={src}
+          key={src}
+          style={{
+            display: "block",
+            width: "100%",
+            height: "100%",
+            border: 0,
+          }} />
+      </div>
       <ScrollArea p="md" style={{
         flexShrink: 1,
         maxWidth: "300px",
