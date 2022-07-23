@@ -58,7 +58,7 @@ const Tableland: NextPage<{ cid: string }> = ({ cid }) => {
                 <p>(switch provider to chain.polygonMumbai in _app.tsx when using this)</p>
                 <TextInput label="table name" value={model.value?.tableName} onChange={e => handleChange('tableName', e.target.value)} />
                 <TextInput label="table schema" value={model.value?.tableSchema} onChange={e => handleChange('tableSchema', e.target.value)} />
-                <pre>id int primary key, name text, address text</pre>
+                <pre>uuid varchar(255) primary key, name varchar(512), address varchar(42)</pre>
                 <pre>id int primary key, artist text, title text</pre>
                 <Button color="red" onClick={createTable}>Create table</Button>
                 <hr/>
