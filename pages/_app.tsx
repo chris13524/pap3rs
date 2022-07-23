@@ -3,6 +3,7 @@ import type { AppProps } from "next/app";
 
 import "@rainbow-me/rainbowkit/styles.css";
 import {
+  darkTheme,
   getDefaultWallets,
   RainbowKitProvider,
 } from "@rainbow-me/rainbowkit";
@@ -45,7 +46,7 @@ import { NotificationsProvider } from "@mantine/notifications";
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <WagmiConfig client={wagmiClient}>
-      <RainbowKitProvider chains={chains}>
+      <RainbowKitProvider chains={chains} theme={darkTheme()}>
         <MantineProvider>
           <NotificationsProvider>
             <Layout>

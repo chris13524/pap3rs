@@ -13,7 +13,7 @@ const Layout: NextPage<{ children: ReactNode }> = ({ children }) => {
       <meta name="description" content="Academic papers published on IPFS" />
       <link rel="icon" href="/favicon.ico" />
     </Head>
-    <MantineProvider theme={{ colorScheme: "light" }} withGlobalStyles withNormalizeCSS>
+    <MantineProvider theme={{ colorScheme: "dark" }} withGlobalStyles withNormalizeCSS>
       <AppShell
         padding={0}
         header={
