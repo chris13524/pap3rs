@@ -1,4 +1,4 @@
-import { Stack, Title, Text, Grid, Space } from "@mantine/core";
+import { Stack, Title, Text, Grid, Space, Container } from "@mantine/core";
 import type { NextPage } from "next";
 import { useSigner } from "wagmi";
 import { usePapersContract } from "../utils/contracts";
@@ -23,7 +23,7 @@ const Home: NextPage = () => {
     const paperCids = [];
     for (const pap of paps) {
       paperCids.push(pap.content);
-    } 
+    }
     if (paperCids) {
       const groups = [
         { name: "Featured papers", papers: featuredPapers },
@@ -41,19 +41,20 @@ const Home: NextPage = () => {
   }, []);
 
   return (
-    <Stack p="md">
-      <Title order={1}>Pap3rs</Title>
+    <Container>
+      <Stack p="md">
+        <Space h="md" />
+        <Text>Academic papers published on IPFS. Papers can link to each other using metadata, are versioned on Ceramic, and a smart contract can be used to fund research projects.</Text>
 
-      <Text>Academic papers published on IPFS. Papers can link to each other using metadata, are versioned on Ceramic, and a smart contract can be used to fund research projects.</Text>
-      
-      {papers.value?.map(group => (
-        <Fragment key={group.name}>
-          <Space />
-          <Title order={2}>{group.name}</Title>
-          <PaperCard papers={group.papers} />
-        </Fragment>
-      ))}
-    </Stack >
+        {papers.value?.map(group => (
+          <Fragment key={group.name}>
+            <Space />
+            <Title order={2}>{group.name}</Title>
+            <PaperCard papers={group.papers} />
+          </Fragment>
+        ))}
+      </Stack >
+    </Container>
   );
 };
 

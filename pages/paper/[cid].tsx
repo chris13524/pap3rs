@@ -36,17 +36,16 @@ const Paper: NextPage = () => {
     <Box style={{
       display: "flex",
       flexDirection: "row",
+      height: "100%",
     }}>
       <iframe key={src} src={src} style={{
         display: "block",
         width: "100%",
-        height: "100vh",
         border: 0,
       }} />
       <ScrollArea p="md" style={{
         flexShrink: 1,
         maxWidth: "300px",
-        height: "100vh",
       }}>
         <Stack>
           <Group>
