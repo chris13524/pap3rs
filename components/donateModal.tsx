@@ -1,13 +1,13 @@
 import React, { useState } from "react";
-import { Container, Modal, Button, Group, NumberInput, Stack, Select, Text } from "@mantine/core";
-import { useBalance, useSigner, useToken } from "wagmi";
+import { Modal, Button, Group, NumberInput, Stack, Text } from "@mantine/core";
+import { useSigner } from "wagmi";
 import { usePapersContract, useMockTokenContract } from "../utils/contracts";
 import { NextPage } from "next";
 import { parseEther, formatEther } from "ethers/lib/utils";
 import { useForm } from "@mantine/form";
 import { useAsync } from "react-use";
-import { ethers } from "ethers";
 import { upperCaseFirst } from "upper-case-first";
+import { Gift } from "tabler-icons-react";
 
 const DonateModal: NextPage<{ cid: string }> = ({ cid }) => {
   const { data: signer } = useSigner();
@@ -17,7 +17,6 @@ const DonateModal: NextPage<{ cid: string }> = ({ cid }) => {
       return await signer.getAddress();
     }
   }, [signer]);
-  const { data: balance } = useBalance(address.value ? { addressOrName: address.value } : {});
 
   const contract = usePapersContract(signer);
   const mockTokenContract = useMockTokenContract(signer);
@@ -83,7 +82,11 @@ const DonateModal: NextPage<{ cid: string }> = ({ cid }) => {
         </form>
       </Modal>
       <Group position="center">
-        <Button onClick={() => setOpened(true)}>Donate</Button>
+        <Button
+          onClick={() => setOpened(true)}
+          leftIcon={<Gift />}>
+          Donate
+        </Button>
         <Text>{tokenData.value?.donationAmount} {tokenData.value?.symbol} donated so far!</Text>
       </Group>
     </>
