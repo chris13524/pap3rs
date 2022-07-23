@@ -1,4 +1,7 @@
 import { retrieveJson } from "./ipfs";
+import { queryTable } from "../utils/tableland";
+
+const tableName: string = 'paper_80001_551';
 
 export type Paper = {
   authors: string[],
@@ -18,9 +21,13 @@ export const allPapers = [
 ];
 
 export async function getPapers(cids: string[]): Promise<PaperWithId[]> {
+  console.log(`getPapers: ${cids}`);
+  const papersFromTableland = await queryTable(`SELECT * from ${tableName};`);
   const papers = [];
-  for (const cid of cids) {
-    const paper = Object.assign(await retrieveJson<PaperWithId>(cid), { id: cid });
+  for (const paperFromTableland of papersFromTableland) {
+    console.log(paperFromTableland.cid);
+    console.log(await retrieveJson<PaperWithId>(paperFromTableland.cid));
+    const paper = Object.assign(await retrieveJson<PaperWithId>(paperFromTableland.cid), { id: paperFromTableland.cid });
     papers.push(paper);
   }
   return papers;

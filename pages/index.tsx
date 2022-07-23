@@ -19,10 +19,15 @@ const Home: NextPage = () => {
   }, [signer, contract]);
 
   const papers = useAsync(async () => {
-    if (paperCids.value) {
+    let paps = await getPapers(['blahblah']); // TODO: maybe we pass in a sublist at some point, but service won't select specific ones yet
+    const paperCids = [];
+    for (const pap of paps) {
+      paperCids.push(pap.content);
+    } 
+    if (paperCids) {
       const groups = [
         { name: "Featured papers", papers: featuredPapers },
-        { name: "New papers", papers: paperCids.value },
+        { name: "New papers", papers: paperCids },
       ];
       const resolvedGroups = [] as { name: string, papers: PaperWithId[] }[];
       for (const group of groups) {
@@ -33,14 +38,14 @@ const Home: NextPage = () => {
       }
       return resolvedGroups;
     }
-  }, [paperCids]);
+  }, []);
 
   return (
     <Stack p="md">
       <Title order={1}>Pap3rs</Title>
 
       <Text>Academic papers published on IPFS. Papers can link to each other using metadata, are versioned on Ceramic, and a smart contract can be used to fund research projects.</Text>
-
+      
       {papers.value?.map(group => (
         <Fragment key={group.name}>
           <Space />
