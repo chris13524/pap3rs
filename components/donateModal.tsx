@@ -32,7 +32,6 @@ const DonateModal: NextPage<{ cid: string }> = ({ cid }) => {
       };
     }
   }, [signer, contract, mockTokenContract, address]);
-  console.log("tokenData outside:", tokenData);
 
   const [opened, setOpened] = useState(false);
 
@@ -85,7 +84,7 @@ const DonateModal: NextPage<{ cid: string }> = ({ cid }) => {
       </Modal>
       <Group position="center">
         <Button onClick={() => setOpened(true)}>Donate</Button>
-        <Text>{tokenData.value?.donationAmount} donated so far!</Text>
+        <Text>{tokenData.value?.donationAmount} {tokenData.value?.symbol} donated so far!</Text>
       </Group>
     </>
   );
