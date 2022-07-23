@@ -1,20 +1,6 @@
-import { connect, resultsToObjects } from "@tableland/sdk";
+import { queryTable } from "../utils/tableland";
 
 const tableName: string = 'temp1_80001_541';
-
-/*
-TODO: shift this into tableland service
-*/
-async function queryTable(sql: string) {
-    console.log(`Going to run sql query: ${sql}`);
-    let connection = await connect({ network: "testnet", chain: "polygon-mumbai" });
-    const queryResult = await connection.read(sql);
-    console.log('queryResult:', queryResult);
-    const entries = resultsToObjects(queryResult);
-    console.log(`Response from query => resultsToObjects: ${sql}:`, entries);
-    let allAuthors: Author[] = entries;
-    return allAuthors
-}
 
 export type Author = {
     /**
@@ -29,5 +15,5 @@ export type Author = {
 };
 
 export async function allAuthors(): Promise<Author[]> {
-    return await queryTable(`SELECT * from ${tableName};`);
+    return await queryTable(`SELECT * from ${tableName};`); // TODO: squiqqly alert!
 }
