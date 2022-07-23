@@ -1,29 +1,36 @@
-import { UnstyledButton, Text, Group } from "@mantine/core";
+import { Group, Button } from "@mantine/core";
 import { NextLink } from "@mantine/next";
+import { ReactNode } from "react";
+import { CloudUpload, Search, Tool } from "tabler-icons-react";
 
 type Link = {
   href: string,
   label: string,
+  icon: ReactNode,
 };
 
-const NavLink = ({ href, label }: Link) => {
-  return <UnstyledButton component={NextLink} href={href} sx={(theme) => ({
-    padding: theme.spacing.xs,
-    borderRadius: theme.radius.sm,
-    color: theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.black,
-    "&:hover": {
-      backgroundColor:
-        theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[0],
-    },
-  })}>
+const NavLink = ({ href, label, icon }: Link) => {
+  return <Button
+    variant="subtle"
+    leftIcon={icon}
+    component={NextLink} href={href}
+    sx={(theme) => ({
+      padding: theme.spacing.xs,
+      borderRadius: theme.radius.sm,
+      color: theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.black,
+      "&:hover": {
+        backgroundColor:
+          theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[0],
+      },
+    })}>
     {label}
-  </UnstyledButton>;
+  </Button>;
 };
 
 const links: Link[] = [
-  { href: "/", label: "Home" },
-  { href: "/upload", label: "Upload paper" },
-  { href: "/tableland", label: "Tableland utility" }
+  { href: "/", label: "Home", icon: <Search /> },
+  { href: "/upload", label: "Upload paper", icon: <CloudUpload /> },
+  { href: "/tableland", label: "Tableland utility", icon: <Tool /> }
 ];
 
 const NavLinks = ({ }) => {
