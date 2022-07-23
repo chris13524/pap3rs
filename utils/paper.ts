@@ -1,4 +1,5 @@
 export type Paper = {
+  authors: string[],
   title: string,
   description: string,
   content: string,

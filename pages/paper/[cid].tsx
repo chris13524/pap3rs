@@ -1,4 +1,4 @@
-import { Text, Box, ScrollArea, List, Title, Stack, Anchor } from "@mantine/core";
+import { Text, Box, ScrollArea, List, Title, Stack, Anchor, Group, Badge } from "@mantine/core";
 import { NextLink } from "@mantine/next";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
@@ -6,20 +6,24 @@ import { useEffect, useState } from "react";
 import { retrieveJson } from "../../utils/ipfs";
 import { Paper } from "../../utils/paper";
 import DonateModal from "../../components/donateModal";
+import { Author } from "../../utils/author";
 
-type ResolvedPaper = Paper & { resolvedReferences: (Paper & { cid: string })[] };
+type ResolvedPaper = Paper & { resolvedReferences: (Paper & { cid: string })[], resolvedAuthors: (Author & { cid: string })[] };
 
 const Paper: NextPage = () => {
   const router = useRouter();
-  const { cid } = router.query;
+  const cid = router.query.cid as string;
 
   const [paper, setPaper] = useState<ResolvedPaper>();
   useEffect(() => {
     (async () => {
       if (cid) {
-        const paper = Object.assign(await retrieveJson<ResolvedPaper>(cid as string), { resolvedReferences: [] });
+        const paper = Object.assign(await retrieveJson<ResolvedPaper>(cid), { resolvedReferences: [], resolvedAuthors: [] });
         for (const reference of paper.references) {
           paper.resolvedReferences.push(Object.assign(await retrieveJson<Paper>(reference), { cid: reference }));
+
+          paper.resolvedAuthors.push({ name: "Vitalik", address: "xxxx", cid: "aaaa" });
+          paper.resolvedAuthors.push({ name: "Satoshi", address: "yyyy", cid: "bbbb" });
         }
         setPaper(paper);
       }
@@ -45,6 +49,25 @@ const Paper: NextPage = () => {
         height: "100vh",
       }}>
         <Stack>
+          <Group>
+            {paper?.resolvedAuthors.map(author => (
+              <Badge key={author.cid}
+                color="gray" variant="outline"
+                styles={{
+                  root: {
+                    cursor: "pointer",
+                    textTransform: "none",
+                    "&:hover": {
+                      backgroundColor: "darkgray",
+                      color: "white",
+                    }
+                  }
+                }}
+                component={NextLink} href={`/author/${author.cid}`} >
+                {author.name}
+              </Badge>
+            ))}
+          </Group>
           <Text>{paper?.title}</Text>
           <Text>{paper?.description}</Text>
           {paper?.resolvedReferences.length ? <>
@@ -59,7 +82,7 @@ const Paper: NextPage = () => {
               ))}
             </List>
           </> : <></>}
-          <DonateModal cid={cid}/>
+          <DonateModal cid={cid} />
         </Stack>
       </ScrollArea>
     </Box>
