@@ -5,7 +5,6 @@ import { useForm } from "@mantine/form";
 import { Author, addAuthor } from "../utils/author";
 import { useSigner } from "wagmi";
 import { useAsync } from "react-use";
-import { v4 as uuidv4 } from 'uuid';
 
 const CreateAuthorModal: NextPage<{
   openedState: [boolean, Dispatch<SetStateAction<boolean>>],
@@ -21,8 +20,6 @@ const CreateAuthorModal: NextPage<{
 
   const onSubmit = (author: Author) => {
     // TODO create it
-    console.log(author);
-    console.log(uuidv4());
     addAuthor(author);
     setOpened(false);
     onCreate(author);
