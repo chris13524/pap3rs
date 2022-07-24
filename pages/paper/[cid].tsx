@@ -8,37 +8,77 @@ import { Paper } from "../../utils/paper";
 import DonateModal from "../../components/donateModal";
 import WithdrawModal from "../../components/withdrawModal";
 import { Author } from "../../utils/author";
+import { useQuery, gql } from "@apollo/client";
 
-type ResolvedPaper = Paper & { resolvedReferences: (Paper & { cid: string })[], resolvedReviews: (Paper & { cid: string })[], resolvedAuthors: (Author & { cid: string })[] };
+// type ResolvedPaper = Paper & { resolvedReferences: (Paper & { cid: string })[], resolvedReviews: (Paper & { cid: string })[], resolvedAuthors: (Author & { cid: string })[] };
+type ResolvedPaper = Omit<Paper, "authors" | "references" | "reviews"> & {
+  authors: { author: Author & { id: string } }[],
+  references: { paper: Paper & { id: string } }[],
+  reviews: { paper: Paper & { id: string } }[],
+};
 
 const Paper: NextPage = () => {
   const router = useRouter();
   const cid = router.query.cid as string;
 
-  const [paper, setPaper] = useState<ResolvedPaper>();
-  useEffect(() => {
-    (async () => {
-      if (cid) {
-        const paper = Object.assign(await retrieveJson<ResolvedPaper>(cid), { resolvedReferences: [], resolvedReviews: [], resolvedAuthors: [] });
-        for (const cid of paper.references) {
-          paper.resolvedReferences.push(Object.assign(await retrieveJson<Paper>(cid), { cid: cid }));
+  // const [paper, setPaper] = useState<ResolvedPaper>();
+  // useEffect(() => {
+  //   (async () => {
+  //     if (cid) {
+  //       const paper = Object.assign(await retrieveJson<ResolvedPaper>(cid), { resolvedReferences: [], resolvedReviews: [], resolvedAuthors: [] });
+  //       for (const cid of paper.references) {
+  //         paper.resolvedReferences.push(Object.assign(await retrieveJson<Paper>(cid), { cid: cid }));
+  //       }
+  //       // for (const cid of paper.reviews) {
+  //       //   paper.resolvedReviews.push(Object.assign(await retrieveJson<Paper>(cid), { cid: cid }));
+  //       // }
+
+  //       paper.resolvedAuthors.push({ name: "Vitalik Buterin", address: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045", cid: "aaaa" });
+  //       paper.resolvedAuthors.push({ name: "Satoshi Nakamoto", address: "yyyy", cid: "bbbb" });
+  //       paper.resolvedReviews.push({ title: "Other paper" } as (Paper & { cid: string }));
+  //       paper.resolvedReviews.push({ title: "Other paper" } as (Paper & { cid: string }));
+  //       paper.resolvedReviews.push({ title: "Other paper" } as (Paper & { cid: string }));
+  //       paper.resolvedReviews.push({ title: "Other paper" } as (Paper & { cid: string }));
+  //       setPaper(paper);
+  //     }
+  //   })();
+  // }, [cid]);
+
+  const paper = useQuery<{ paper: ResolvedPaper }>(gql`
+    query ResolvedPaper($id: String!) {
+      paper(id: $id) {
+        authors {
+          author {
+            id
+            name
+            address
+          }
         }
-        // for (const cid of paper.reviews) {
-        //   paper.resolvedReviews.push(Object.assign(await retrieveJson<Paper>(cid), { cid: cid }));
-        // }
-
-        paper.resolvedAuthors.push({ name: "Vitalik Buterin", address: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045", cid: "aaaa" });
-        paper.resolvedAuthors.push({ name: "Satoshi Nakamoto", address: "yyyy", cid: "bbbb" });
-        paper.resolvedReviews.push({ title: "Other paper" } as (Paper & { cid: string }));
-        paper.resolvedReviews.push({ title: "Other paper" } as (Paper & { cid: string }));
-        paper.resolvedReviews.push({ title: "Other paper" } as (Paper & { cid: string }));
-        paper.resolvedReviews.push({ title: "Other paper" } as (Paper & { cid: string }));
-        setPaper(paper);
+        title
+        description
+        content
+        contentFileName
+        references {
+          paper {
+            id
+            title
+          }
+        }
+        reviews {
+          paper {
+            id
+            title
+          }
+        }
       }
-    })();
-  }, [cid]);
+    }
+  `, {
+    variables: {
+      id: cid,
+    }
+  });
 
-  const src = paper ? `https://${paper.content}.ipfs.dweb.link/${paper.contentFileName}` : undefined;
+  const src = paper.data ? `https://${paper.data.paper.content}.ipfs.dweb.link/${paper.data.paper.contentFileName}` : undefined;
   const [iframeLoading, setIframeLoading] = useState(true);
 
   return (
@@ -71,53 +111,59 @@ const Paper: NextPage = () => {
         maxWidth: "300px",
       }}>
         <Stack spacing="lg">
-          <Title>{paper?.title}</Title>
-          <Group>
-            {paper?.resolvedAuthors.map(author => (
-              <Badge key={author.cid}
-                color="gray" variant="outline"
-                styles={{
-                  root: {
-                    cursor: "pointer",
-                    textTransform: "none",
-                    "&:hover": {
-                      backgroundColor: "darkgray",
-                      color: "white",
-                    },
-                  },
-                }}
-                component={NextLink} href={`/author/${author.cid}`} >
-                {author.name}
-              </Badge>
-            ))}
-          </Group>
-          <DonateModal cid={cid} />
-          <WithdrawModal cid={cid} />
-          <Text>{paper?.description}</Text>
-          {paper?.resolvedReferences.length ? <>
-            <Title order={4}>References</Title>
-            <List>
-              {paper?.resolvedReferences?.map(reference => (
-                <List.Item key={reference.cid}>
-                  <Anchor component={NextLink} href={`/paper/${reference.cid}`}>
-                    {reference.title}
-                  </Anchor>
-                </List.Item>
-              ))}
-            </List>
-          </> : <></>}
-          {paper?.resolvedReviews.length ? <>
-            <Title order={4}>Reviews</Title>
-            <List>
-              {paper?.resolvedReviews?.map(review => (
-                <List.Item key={review.cid}>
-                  <Anchor component={NextLink} href={`/paper/${review.cid}`}>
-                    {review.title}
-                  </Anchor>
-                </List.Item>
-              ))}
-            </List>
-          </> : <></>}
+          {paper.loading
+            ? <Loader />
+            : paper.error
+              ? paper.error.message
+              : <>
+                <Title>{paper.data?.paper.title}</Title>
+                <Group>
+                  {paper.data?.paper.authors.map(author => (
+                    <Badge key={author.author.id}
+                      color="gray" variant="outline"
+                      styles={{
+                        root: {
+                          cursor: "pointer",
+                          textTransform: "none",
+                          "&:hover": {
+                            backgroundColor: "darkgray",
+                            color: "white",
+                          },
+                        },
+                      }}
+                      component={NextLink} href={`/author/${author.author.id}`} >
+                      {author.author.name}
+                    </Badge>
+                  ))}
+                </Group>
+                <DonateModal cid={cid} />
+                <WithdrawModal cid={cid} />
+                <Text>{paper.data?.paper.description}</Text>
+                {paper.data?.paper.references.length ? <>
+                  <Title order={4}>References</Title>
+                  <List>
+                    {paper.data?.paper.references?.map(reference => (
+                      <List.Item key={reference.paper.id}>
+                        <Anchor component={NextLink} href={`/paper/${reference.paper.id}`}>
+                          {reference.paper.title}
+                        </Anchor>
+                      </List.Item>
+                    ))}
+                  </List>
+                </> : <></>}
+                {paper.data?.paper.reviews.length ? <>
+                  <Title order={4}>Reviews</Title>
+                  <List>
+                    {paper.data?.paper.reviews?.map(review => (
+                      <List.Item key={review.paper.id}>
+                        <Anchor component={NextLink} href={`/paper/${review.paper.id}`}>
+                          {review.paper.title}
+                        </Anchor>
+                      </List.Item>
+                    ))}
+                  </List>
+                </> : <></>}
+              </>}
         </Stack>
       </ScrollArea>
     </Box>

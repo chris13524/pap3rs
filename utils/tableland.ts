@@ -1,5 +1,7 @@
 import { connect, resultsToObjects } from "@tableland/sdk";
 
+export const useTableland = false;
+
 export async function queryTable(sql: string) {
     console.log(`Going to run (read) sql query: ${sql}`);
     let connection = await connect({ network: "testnet", chain: "polygon-mumbai" });

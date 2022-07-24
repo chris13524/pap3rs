@@ -42,18 +42,22 @@ const wagmiClient = createClient({
 import Layout from "../components/layout";
 import { MantineProvider } from "@mantine/core";
 import { NotificationsProvider } from "@mantine/notifications";
+import { ApolloProvider } from "@apollo/client";
+import { graphClient } from "../utils/graph";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <WagmiConfig client={wagmiClient}>
       <RainbowKitProvider chains={chains} theme={darkTheme()}>
-        <MantineProvider>
-          <NotificationsProvider>
-            <Layout>
-              <Component {...pageProps} />
-            </Layout>
-          </NotificationsProvider>
-        </MantineProvider>
+        <ApolloProvider client={graphClient}>
+          <MantineProvider>
+            <NotificationsProvider>
+              <Layout>
+                <Component {...pageProps} />
+              </Layout>
+            </NotificationsProvider>
+          </MantineProvider>
+        </ApolloProvider>
       </RainbowKitProvider>
     </WagmiConfig>
   );

@@ -32,3 +32,31 @@ npx hardhat console --network localhost
 [owner, addr1, addr2, ...addrs] = await ethers.getSigners();
 Pap3rs = await ethers.getContractFactory("Pap3rs");
 c = await ethers.getContractAt("Pap3rs","0x5FC8d32690cc91D4c39d9d3abcBD16989F875707");
+
+## Deploy to Mumbai
+
+```bash
+POLYGON_MUMBAI_PRIVATE_KEY=$(cat private.key) npx hardhat run --network polygon-mumbai scripts/deploy.js
+```
+
+## Subgraph Setup
+
+Setup repo boilerplate:
+
+```bash
+graph init --product hosted-service --from-contract 0x8598a95186dd548E942fD74fAB8bCFbfac57903D --network mumbai --abi artifacts/contracts/Pap3rs.sol/Pap3rs.json chris13524/pap3rs subgraph
+```
+
+Login to hosted service:
+
+```bash
+graph auth --product hosted-service
+```
+
+```bash
+npm run build
+```
+
+```bash
+npm run deploy
+```

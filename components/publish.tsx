@@ -9,8 +9,10 @@ import { retrieveJson, storeJson, web3Storage } from "../utils/ipfs";
 import { allPapers, Paper } from "../utils/paper";
 import { showNotification } from "@mantine/notifications";
 import { useRouter } from "next/router";
-import { allAuthors, Author } from "../utils/author";
 import CreateAuthorModal from "./CreateAuthorModal";
+import { gql, useQuery } from "@apollo/client";
+import { Author } from "../utils/author";
+import { useTableland } from "../utils/tableland";
 
 const useStyles = createStyles((theme) => ({
   dropzone: {
@@ -57,21 +59,27 @@ async function storeWithProgress(contract: any, values: FormValues, files: File[
     },
   });
 
-  const metadata = await storeJson<Paper>({
+  const paper = {
     ...values,
     content,
     contentFileName: files[0].name,
-  });
-  console.log("metadata CID:", metadata);
+  };
 
-  await contract.upload(metadata, values.authors[0]); // TODO multiple authors
+  if (useTableland) {
+    const metadata = await storeJson<Paper>(paper);
+    console.log("metadata CID:", metadata);
+
+    await contract.upload(metadata, values.authors[0]); // TODO multiple authors
+  } else {
+    await contract.upload(paper.authors, paper.title, paper.description, paper.content, paper.contentFileName, paper.references, paper.reviews);
+  }
 
   showNotification({
     title: "Paper published",
     message: "Your paper has been published to IPFS!",
   });
 
-  return metadata;
+  return paper.content;
 }
 
 type FormValues = {
@@ -114,13 +122,23 @@ function UploadForm() {
     })();
   }, []);
 
-  const [authors, setAuthors] = useState<Author[]>([]);
-  useEffect(() => {
-    (async () => {
-      const papers = await allAuthors();
-      setAuthors(papers);
-    })();
-  }, []);
+  // const [authors, setAuthors] = useState<Author[]>([]);
+  // useEffect(() => {
+  //   (async () => {
+  //     const papers = await allAuthors();
+  //     setAuthors(papers);
+  //   })();
+  // }, []);
+
+  const authors = useQuery<{ authors: Author[] }>(gql`
+    {
+      authors {
+        id
+        name
+        address
+      }
+    }
+  `);
 
   const form = useForm<FormValues>({
     initialValues: {
@@ -147,7 +165,8 @@ function UploadForm() {
             name={createAuthorModalName}
             onCreate={author => {
               // add new author to available authors ()
-              setAuthors(authors => [...authors, author]);
+              // setAuthors(authors => [...authors, author]);
+              if (authors.data) authors.data.authors.push(author);
 
               // update selected author to use new name entered in modal
               form.setFieldValue("authors", form.values.authors.map(mappedAuthor => {
@@ -169,7 +188,7 @@ function UploadForm() {
 
             <MultiSelect
               required
-              data={authors.map(author => ({ label: author.name, value: author.address }))}
+              data={authors.data ? authors.data.authors.map(author => ({ label: author.name, value: author.address })) : []}
               label="Authors"
               searchable
               creatable
