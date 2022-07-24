@@ -45,7 +45,7 @@ const WithdrawModal: NextPage<{ cid: string }> = ({ cid }) => {
 
   const form = useForm<FormValues>({
     initialValues: {
-      amount: 100
+      amount: 100,
     },
   });
 

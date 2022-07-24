@@ -2,8 +2,7 @@ import { Text, Box, ScrollArea, List, Title, Stack, Anchor, Group, Badge, Loader
 import { NextLink } from "@mantine/next";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { retrieveJson } from "../../utils/ipfs";
+import { useState } from "react";
 import { Paper } from "../../utils/paper";
 import DonateModal from "../../components/donateModal";
 import WithdrawModal from "../../components/withdrawModal";
@@ -75,7 +74,7 @@ const Paper: NextPage = () => {
   `, {
     variables: {
       id: cid,
-    }
+    },
   });
 
   const src = paper.data && paper.data.paper ? `https://${paper.data.paper.content}.ipfs.dweb.link/${paper.data.paper.contentFileName}` : undefined;

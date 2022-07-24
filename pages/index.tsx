@@ -1,12 +1,9 @@
-import { Stack, Title, Text, Grid, Space, Container, ScrollArea, LoadingOverlay, Loader } from "@mantine/core";
+import { Stack, Title, Text, Space, Container, ScrollArea, Loader } from "@mantine/core";
 import type { NextPage } from "next";
 import { useSigner } from "wagmi";
 import { usePapersContract } from "../utils/contracts";
-import { Fragment, useEffect, useState } from "react";
-import { retrieveJson } from "../utils/ipfs";
-import { allPapers as featuredPapers, getPapers, Paper, PaperWithId } from "../utils/paper";
+import { Paper } from "../utils/paper";
 import PaperCard from "../components/paper";
-import { useAsync } from "react-use";
 import { useQuery, gql } from "@apollo/client";
 
 const Home: NextPage = () => {
@@ -63,7 +60,7 @@ const Home: NextPage = () => {
               ? <Text>{papers.error.message}</Text>
               : <>
                 <Space h="md" />
-                <Text>Academic papers published on IPFS. Papers can link to each other using metadata, are versioned on Ceramic, and a smart contract can be used to fund research projects.</Text>
+                <Text>Academic papers published on IPFS. Papers can link to each other using metadata and references. Papers can be donated to via smart contract.</Text>
                 {/* {papers.data?.papers.map(group => (
                   <Fragment key={group.name}>
                     <Space />

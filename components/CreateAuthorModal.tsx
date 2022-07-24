@@ -2,10 +2,9 @@ import React, { Dispatch, SetStateAction } from "react";
 import { Modal, Button, Stack, TextInput, Badge } from "@mantine/core";
 import { NextPage } from "next";
 import { useForm } from "@mantine/form";
-import { Author, addAuthor } from "../utils/author";
+import { Author } from "../utils/author";
 import { useSigner } from "wagmi";
 import { useAsync } from "react-use";
-import { useTableland } from "../utils/tableland";
 import { usePapersContract } from "../utils/contracts";
 
 const CreateAuthorModal: NextPage<{
@@ -23,11 +22,7 @@ const CreateAuthorModal: NextPage<{
   const contract = usePapersContract(signer);
 
   const onSubmit = async (author: Author) => {
-    if (useTableland) {
-      addAuthor(author);
-    } else {
-      await contract.newAuthor(author.name, author.address);
-    }
+    await contract.newAuthor(author.name, author.address);
     setOpened(false);
     onCreate(author);
   };

@@ -14,25 +14,25 @@ const Layout: NextPage<{ children: ReactNode }> = ({ children }) => {
       <link rel="icon" href="/favicon.ico" />
     </Head>
     <MantineProvider theme={{ colorScheme: "dark", colors: {
-          // override dark colors to change them for all components
-          dark: [
-            '#d5d7e0',
-            '#acaebf',
-            '#8c8fa3',
-            '#666980',
-            '#4d4f66',
-            '#34354a',
-            '#2b2c3d',
-            '#1d1e30',
-            '#0c0d21',
-            '#01010a',
-          ],
-        }, }} withGlobalStyles withNormalizeCSS>
+      // override dark colors to change them for all components
+      dark: [
+        "#d5d7e0",
+        "#acaebf",
+        "#8c8fa3",
+        "#666980",
+        "#4d4f66",
+        "#34354a",
+        "#2b2c3d",
+        "#1d1e30",
+        "#0c0d21",
+        "#01010a",
+      ],
+    } }} withGlobalStyles withNormalizeCSS>
       <AppShell
         padding={0}
         header={
           <Header height={60}>
-            <Group sx={{ height: '100%' }} px={20} position="apart">
+            <Group sx={{ height: "100%" }} px={20} position="apart">
               <Logo />
               <NavLinks />
               <ConnectButton />

@@ -1,18 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Text, Group, Button, createStyles, MantineTheme, useMantineTheme, Stack, Container, Title, TextInput, Textarea, MultiSelect, LoadingOverlay, Loader } from "@mantine/core";
 import { Dropzone, DropzoneStatus, MIME_TYPES } from "@mantine/dropzone";
 import { CloudUpload } from "tabler-icons-react";
 import { useSigner } from "wagmi";
 import { usePapersContract } from "../utils/contracts";
 import { useForm } from "@mantine/form";
-import { retrieveJson, storeJson, web3Storage } from "../utils/ipfs";
-import { allPapers, Paper } from "../utils/paper";
+import { web3Storage } from "../utils/ipfs";
+import { Paper } from "../utils/paper";
 import { showNotification } from "@mantine/notifications";
 import { useRouter } from "next/router";
 import CreateAuthorModal from "./CreateAuthorModal";
 import { gql, useQuery } from "@apollo/client";
 import { Author } from "../utils/author";
-import { useTableland } from "../utils/tableland";
 
 const useStyles = createStyles((theme) => ({
   dropzone: {
@@ -65,14 +64,7 @@ async function storeWithProgress(contract: any, values: FormValues, files: File[
     contentFileName: files[0].name,
   };
 
-  if (useTableland) {
-    const metadata = await storeJson<Paper>(paper);
-    console.log("metadata CID:", metadata);
-
-    await contract.upload(metadata, values.authors[0]); // TODO multiple authors
-  } else {
-    await contract.upload(paper.authors, paper.title, paper.description, paper.content, paper.contentFileName, paper.references, paper.reviews);
-  }
+  await contract.upload(paper.authors, paper.title, paper.description, paper.content, paper.contentFileName, paper.references, paper.reviews);
 
   showNotification({
     title: "Paper published",
