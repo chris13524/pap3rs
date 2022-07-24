@@ -1,4 +1,4 @@
-import { MantineProvider, AppShell, Center, Header, Group, ScrollArea } from "@mantine/core";
+import { MantineProvider, AppShell, Center, Header, Group, Space } from "@mantine/core";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { NextPage } from "next";
 import Head from "next/head";
@@ -33,7 +33,7 @@ const Layout: NextPage<{ children: ReactNode }> = ({ children }) => {
         header={
           <Header height={60}>
             <Group sx={{ height: '100%' }} px={20} position="apart">
-              <Logo />
+              <Space w={165} />
               <NavLinks />
               <ConnectButton />
             </Group>
