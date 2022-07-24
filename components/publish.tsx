@@ -139,7 +139,7 @@ function UploadForm() {
     }
   `);
 
-  const authors = useQuery<{ authors: Author[] }>(gql`
+  const queryAuthors = useQuery<{ authors: Author[] }>(gql`
     {
       authors {
         id
@@ -148,6 +148,8 @@ function UploadForm() {
       }
     }
   `);
+  const [authors, setAuthors] = useState<Author[]>([]);
+  if (authors === [] && queryAuthors.data !== undefined) setAuthors(queryAuthors.data.authors);
 
   const form = useForm<FormValues>({
     initialValues: {
@@ -174,13 +176,12 @@ function UploadForm() {
             name={createAuthorModalName}
             onCreate={author => {
               // add new author to available authors ()
-              // setAuthors(authors => [...authors, author]);
-              // if (authors.data) authors.data.authors.push(author);
+              setAuthors(authors => [...authors, author]);
 
               // update selected author to use new name entered in modal
               form.setFieldValue("authors", form.values.authors.map(mappedAuthor => {
                 if (mappedAuthor == createAuthorModalName) {
-                  return author;
+                  return author.address;
                 } else {
                   return mappedAuthor;
                 }
@@ -195,14 +196,14 @@ function UploadForm() {
           <Stack p="md">
             <Title>Publish Paper</Title>
 
-            {authors.loading || papers.loading
+            {queryAuthors.loading || papers.loading
               ? <Loader />
-              : authors.error || papers.error
-                ? (`${authors.error?.message}` + `${papers.error?.message}`)
+              : queryAuthors.error || papers.error
+                ? (`${queryAuthors.error?.message}` + `${papers.error?.message}`)
                 : <>
                   <MultiSelect
                     required
-                    data={authors.data ? authors.data.authors.map(author => ({ label: author.name, value: author.address })) : []}
+                    data={authors.map(author => ({ label: author.name, value: author.address }))}
                     label="Authors"
                     searchable
                     creatable

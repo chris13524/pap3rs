@@ -1,0 +1,33 @@
+specVersion: 0.0.4
+description: Academic papers published to IPFS
+repository: https://github.com/chris13524/pap3rs
+schema:
+  file: schema.graphql
+dataSources:
+  - kind: ethereum
+    name: Pap3rs
+    network: mumbai
+    source:
+      address: "0xe5CF3100e8Dd5Ecbb3938522C332c283bDeDE2b2"
+      abi: Pap3rs
+      startBlock: 27314294
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - Donation
+        - DonationApproval
+      abis:
+        - name: Pap3rs
+          file: public/src/contracts/Pap3rs.json
+      eventHandlers:
+        - event: Donation(indexed address,indexed address,uint256)
+          handler: handleDonation
+        - event: DonationApproval(indexed address,indexed address,uint256)
+          handler: handleDonationApproval
+        - event: NewAuthor(string,address)
+          handler: handleNewAuthor
+        - event: PublishPaper(address[],string,string,string,string,string[],string[])
+          handler: handlePublishPaper
+      file: Pap3rs/Pap3rs.wasm

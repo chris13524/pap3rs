@@ -1,0 +1,44 @@
+type ExampleEntity @entity {
+  id: ID!
+  count: BigInt!
+  donor: Bytes! # address
+  spender: Bytes! # address
+}
+
+type Paper @entity(immutable: true) {
+  id: String!
+  authors: [PaperAuthor!] @derivedFrom(field: "paper")
+  title: String!
+  description: String!
+  content: String!
+  contentFileName: String!
+  references: [PaperReference!] @derivedFrom(field: "paper")
+  referencedBy: [PaperReference!] @derivedFrom(field: "reference")
+  reviews: [PaperReview!] @derivedFrom(field: "paper")
+  reviewedBy: [PaperReview!] @derivedFrom(field: "review")
+}
+
+type Author @entity(immutable: true) {
+  id: String!
+  name: String!
+  address: String!
+  papers: [PaperAuthor!] @derivedFrom(field: "author")
+}
+
+type PaperAuthor @entity(immutable: true) {
+  id: String!
+  paper: Paper!
+  author: Author!
+}
+
+type PaperReference @entity(immutable: true) {
+  id: String!
+  paper: Paper!
+  reference: Paper!
+}
+
+type PaperReview @entity(immutable: true) {
+  id: String!
+  paper: Paper!
+  review: Paper!
+}
