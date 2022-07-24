@@ -165,7 +165,7 @@ function UploadForm() {
         }
         <form onSubmit={form.onSubmit(onSubmit)}>
           <Stack p="md">
-            <Title>Upload Paper</Title>
+            <Title>Publish Paper</Title>
 
             <MultiSelect
               required
@@ -259,7 +259,7 @@ function UploadForm() {
             />
 
             <Group mt="md">
-              <Button type="submit">Upload</Button>
+              <Button type="submit">Publish</Button>
             </Group>
           </Stack>
         </form>
