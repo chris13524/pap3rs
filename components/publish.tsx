@@ -12,6 +12,7 @@ import { useRouter } from "next/router";
 import CreateAuthorModal from "./CreateAuthorModal";
 import { gql, useQuery } from "@apollo/client";
 import { Author } from "../utils/author";
+import Link from "next/link";
 
 const useStyles = createStyles((theme) => ({
   dropzone: {
@@ -68,10 +69,9 @@ async function storeWithProgress(contract: any, values: FormValues, files: File[
 
   showNotification({
     title: "Paper published",
-    message: "Your paper has been published to IPFS!",
+    message: <Text>Your paper has been published to IPFS <Link href={`/paper/${paper.content}`}>here</Link>.</Text>,
+    autoClose: false,
   });
-
-  return paper.content;
 }
 
 type FormValues = {
@@ -96,7 +96,6 @@ function UploadForm() {
   const onSubmit = (values: FormValues) => {
     setUploading(true);
     storeWithProgress(contract, values, files)
-      .then(cid => setTimeout(() => router.push(`/paper/${cid}`), 5000));
   };
 
   // type ResolvedPaper = Paper & { cid: string };
@@ -141,7 +140,7 @@ function UploadForm() {
     }
   `);
   const [authors, setAuthors] = useState<Author[]>([]);
-  if (authors === [] && queryAuthors.data !== undefined) setAuthors(queryAuthors.data.authors);
+  if (authors.length == 0 && queryAuthors.data != undefined) setAuthors(queryAuthors.data.authors);
 
   const form = useForm<FormValues>({
     initialValues: {
