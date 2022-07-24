@@ -71,6 +71,7 @@ const Home: NextPage = () => {
                     <PaperCard papers={group.papers} />
                   </Fragment>
                 ))} */}
+                <Title order={2}>New papers</Title>
                 <PaperCard papers={papers.data!.papers} />
               </>
           }

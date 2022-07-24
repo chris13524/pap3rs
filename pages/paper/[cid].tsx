@@ -13,8 +13,8 @@ import { useQuery, gql } from "@apollo/client";
 // type ResolvedPaper = Paper & { resolvedReferences: (Paper & { cid: string })[], resolvedReviews: (Paper & { cid: string })[], resolvedAuthors: (Author & { cid: string })[] };
 type ResolvedPaper = Omit<Paper, "authors" | "references" | "reviews"> & {
   authors: { author: Author & { id: string } }[],
-  references: { paper: Paper & { id: string } }[],
-  reviews: { paper: Paper & { id: string } }[],
+  references: { reference: Paper & { id: string } }[],
+  reviews: { review: Paper & { id: string } }[],
 };
 
 const Paper: NextPage = () => {
@@ -59,13 +59,13 @@ const Paper: NextPage = () => {
         content
         contentFileName
         references {
-          paper {
+          reference {
             id
             title
           }
         }
         reviews {
-          paper {
+          review {
             id
             title
           }
@@ -78,7 +78,7 @@ const Paper: NextPage = () => {
     }
   });
 
-  const src = paper.data ? `https://${paper.data.paper.content}.ipfs.dweb.link/${paper.data.paper.contentFileName}` : undefined;
+  const src = paper.data && paper.data.paper ? `https://${paper.data.paper.content}.ipfs.dweb.link/${paper.data.paper.contentFileName}` : undefined;
   const [iframeLoading, setIframeLoading] = useState(true);
 
   return (
@@ -143,9 +143,9 @@ const Paper: NextPage = () => {
                   <Title order={4}>References</Title>
                   <List>
                     {paper.data?.paper.references?.map(reference => (
-                      <List.Item key={reference.paper.id}>
-                        <Anchor component={NextLink} href={`/paper/${reference.paper.id}`}>
-                          {reference.paper.title}
+                      <List.Item key={reference.reference.id}>
+                        <Anchor component={NextLink} href={`/paper/${reference.reference.id}`}>
+                          {reference.reference.title}
                         </Anchor>
                       </List.Item>
                     ))}
@@ -155,9 +155,9 @@ const Paper: NextPage = () => {
                   <Title order={4}>Reviews</Title>
                   <List>
                     {paper.data?.paper.reviews?.map(review => (
-                      <List.Item key={review.paper.id}>
-                        <Anchor component={NextLink} href={`/paper/${review.paper.id}`}>
-                          {review.paper.title}
+                      <List.Item key={review.review.id}>
+                        <Anchor component={NextLink} href={`/paper/${review.review.id}`}>
+                          {review.review.title}
                         </Anchor>
                       </List.Item>
                     ))}

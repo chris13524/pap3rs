@@ -89,7 +89,7 @@ const DonateModal: NextPage<{ cid: string }> = ({ cid }) => {
           leftIcon={<Gift />}>
           Donate
         </Button>
-        <Text>{tokenData.value?.donationAmount} {tokenData.value?.symbol} in donations accumulated!</Text>
+        <Text>{tokenData.value?.donationAmount} {tokenData.value?.symbol} donated!</Text>
       </Group>
     </>
   );
