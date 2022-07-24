@@ -62,5 +62,18 @@ describe("Pap3rs contract", function () {
         await expect(donationTokenBalance).to.equal(donationAmt);
       });
 
+      it("Withdrawing after getting a donation should work", async function () {
+        await mockToken.connect(deployer).transfer(donor.address,donationAmt); // hand out some cash to allow donor to donate
+        await contract.connect(author).upload(cid,'Satoshi Nakamoto'); 
+        await mockToken.connect(donor).approve(contract.address, donationAmt);
+        await contract.connect(donor).donate(cid, mockToken.address, donationAmt);
+        let donationTokenBalance = await contract.getDonationBalance(cid, mockToken.address);
+        await expect(donationTokenBalance).to.equal(donationAmt);
+        await contract.connect(author).withdraw(cid, mockToken.address, ethers.utils.parseUnits("75", 18));
+        donationTokenBalance = await contract.getDonationBalance(cid, mockToken.address);
+        await expect(donationTokenBalance).to.equal(ethers.utils.parseUnits("25", 18));
+        
+      });
+
   });
 });

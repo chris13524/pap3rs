@@ -66,9 +66,9 @@ const Tableland: NextPage<{ cid: string }> = ({ cid }) => {
                 <TextInput value={model.value?.sql} onChange={e => handleChange('sql', e.target.value)} />
                 <Button color="red" onClick={writeToTable}>Update table</Button>
                 <Button color="red" onClick={queryTable}>Query table</Button>
-                <pre>INSERT into temp1_80001_541  (id,name,address) values (2,'Dale W', '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266');</pre>
+                <pre>INSERT INTO author_80001_587 (uuid,name,address) values ('sdfsdfdsfsdfsd','Tester T','0x976EA74026E726554dB657fA54763abd0C3a0aa9');</pre>
                 <pre>INSERT into songs_80001_547 (id,artist,title) values (0,'Beck', 'Loser');</pre>
-                <pre>SELECT * from temp1_80001_541 where id=0;</pre>
+                <pre>SELECT * from author_80001_587</pre>
                 <pre>SELECT id, artist, title FROM songs_80001_547;</pre>
                 <hr/>
                 <Button color="blue" onClick={logAllTables}>logAllTables owned by this wallet</Button>
