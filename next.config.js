@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
-  assetPrefix: './', // support IPFS hosting
+  // assetPrefix: './', // support IPFS hosting
   experimental: {
     images: {
       unoptimized: true,
