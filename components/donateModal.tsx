@@ -81,7 +81,6 @@ const DonateModal: NextPage<{ cid: string }> = ({ cid }) => {
           </Stack>
         </form>
       </Modal>
-      <Space />
       <Group position="center" style={{
         flexWrap: "nowrap",
       }}>
