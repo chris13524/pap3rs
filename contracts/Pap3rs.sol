@@ -100,6 +100,14 @@ contract Pap3rs {
         tokenBalances[cid][tokenContactAddress] += amount;
     }
 
+    function withdraw(string memory cid, address tokenContactAddress, uint256 amount) external {
+        require(contentOwners[cid] == msg.sender, "Only the owner of this cid can withdraw donations");
+        uint256 balance = tokenBalances[cid][tokenContactAddress];
+        require(balance >= amount, "Insufficient balance for withdrawal");
+        tokenBalances[cid][tokenContactAddress] -= amount;
+        IERC20(tokenContactAddress).transfer(msg.sender,amount);
+    }
+
     function getDonationBalance(string memory cid,address tokenContractAddress) public view returns (uint256) {
         uint256 balance = tokenBalances[cid][tokenContractAddress];
         console.log("request for token balance for cid=%s on token %s = %s",cid,tokenContractAddress,balance);

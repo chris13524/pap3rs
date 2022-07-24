@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { retrieveJson } from "../../utils/ipfs";
 import { Paper } from "../../utils/paper";
 import DonateModal from "../../components/donateModal";
+import WithdrawModal from "../../components/withdrawModal";
 import { Author } from "../../utils/author";
 
 type ResolvedPaper = Paper & { resolvedReferences: (Paper & { cid: string })[], resolvedReviews: (Paper & { cid: string })[], resolvedAuthors: (Author & { cid: string })[] };
@@ -91,6 +92,7 @@ const Paper: NextPage = () => {
             ))}
           </Group>
           <DonateModal cid={cid} />
+          <WithdrawModal cid={cid} />
           <Text>{paper?.description}</Text>
           {paper?.resolvedReferences.length ? <>
             <Title order={4}>References</Title>
