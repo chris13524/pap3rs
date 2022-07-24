@@ -30,7 +30,7 @@ const NavLink = ({ href, label, icon }: Link) => {
 const links: Link[] = [
   { href: "/", label: "Discover", icon: <Search /> },
   { href: "/publish", label: "Publish", icon: <CloudUpload /> },
-  { href: "/tableland", label: "Tableland", icon: <Tool /> }
+  // { href: "/tableland", label: "Tableland", icon: <Tool /> }
 ];
 
 const NavLinks = ({ }) => {
