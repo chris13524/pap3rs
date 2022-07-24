@@ -1,7 +1,6 @@
 import { Group, Button } from "@mantine/core";
 import { NextLink } from "@mantine/next";
 import { ReactNode } from "react";
-import Logo from "./logo";
 import { CloudUpload, Search, Tool } from "tabler-icons-react";
 
 type Link = {
@@ -35,10 +34,7 @@ const links: Link[] = [
 ];
 
 const NavLinks = ({ }) => {
-  return <Group>
-          <Logo />
-          {links.map(link => <NavLink {...link} key={link.label} />)}'
-         </Group>;
+  return <Group>{links.map(link => <NavLink {...link} key={link.label} />)}</Group>;
 };
 
 export default NavLinks;
