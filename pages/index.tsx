@@ -60,7 +60,7 @@ const Home: NextPage = () => {
               ? <Text>{papers.error.message}</Text>
               : <>
                 <Space h="md" />
-                <Text>Academic papers published on IPFS. Papers can link to each other using metadata and references. Papers can be donated to via smart contract.</Text>
+                <Text>Academic papers published on IPFS using web3.storage. Papers are indexed using The Graph and link to each other using metadata. Papers can be funded via smart contract.</Text>
                 {/* {papers.data?.papers.map(group => (
                   <Fragment key={group.name}>
                     <Space />
